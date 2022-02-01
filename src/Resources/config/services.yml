@@ -1,0 +1,19 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            #$projectDir: '%kernel.project_dir%'
+
+    Markocupic\SacEventRegistrationReminder\:
+        resource: ../../
+        exclude: ../../{DependencyInjection,Resources,Model,Data/Data.php}
+
+    # Custom route
+    Markocupic\SacEventRegistrationReminder\Controller\MyCustomController:
+        public: true
+        # Since Symfony 5 the container has to be set manually
+        calls:
+            - [ setContainer, [ '@Psr\Container\ContainerInterface' ] ]
+
+
