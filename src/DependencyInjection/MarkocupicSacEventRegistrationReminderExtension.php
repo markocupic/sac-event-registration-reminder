@@ -56,6 +56,6 @@ class MarkocupicSacEventRegistrationReminderExtension extends Extension
         $container->setParameter($rootKey.'.sid', $config['sid']);
         $container->setParameter($rootKey.'.allow_web_scope', $config['allow_web_scope']);
         $container->setParameter($rootKey.'.max_notifications_per_request', $config['max_notifications_per_request']);
-        $container->setParameter($rootKey.'.fallback_language', $config['fallback_language']);
+        $container->setParameter($rootKey.'.default_locale', $config['default_locale']);
     }
 }

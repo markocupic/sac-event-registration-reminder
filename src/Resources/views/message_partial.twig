@@ -6,9 +6,9 @@
     {% endfor %}
 
     {% if event.has_registrations_within_deadline %}
-        {{ 'MSC.serr_these_registrations_are_also_pending'|trans({}, 'contao_default', user_locale) }}
+        {{ 'MSC.serr_these_registrations_are_also_pending'|trans({}, 'contao_default') }}
     {% for registration in event.registrations_within_deadline %}
-    - {{ registration.trans.participant }} {{ registration.firstname }} {{ registration.lastname }}, {{ registration.sac_member_id }} (seit {{ registration.registered_since }} Tag/Tagen)
+    - {{ registration.trans.participant }} {{ registration.firstname }} {{ registration.lastname }}, {{ registration.sac_member_id }} ({{ registration.trans.days_registered }})
     {% endfor %}
 
     {% endif %}

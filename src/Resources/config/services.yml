@@ -7,7 +7,7 @@ services:
             $allowWebScope: '%sac_evt_reg_reminder.allow_web_scope%'
             $sid: '%sac_evt_reg_reminder.sid%'
             $maxNotificationsPerRequest: '%sac_evt_reg_reminder.max_notifications_per_request%'
-            $fallbackLanguage: '%sac_evt_reg_reminder.fallback_language%'
+            $defaultLocale: '%sac_evt_reg_reminder.default_locale%'
 
     Markocupic\SacEventRegistrationReminder\:
         resource: ../../

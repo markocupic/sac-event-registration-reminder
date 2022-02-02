@@ -27,11 +27,12 @@ use NotificationCenter\Model\Notification;
 use Psr\Log\LoggerInterface;
 use Safe\Exceptions\StringsException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/_event_registration_reminder/{sid}", methods={"GET"})
+ * @Route("/_event_registration_reminder/{sid}", methods={"GET"}, defaults={"_locale":"%sac_evt_reg_reminder.default_locale%"})
  */
 class EventRegistrationReminderController extends AbstractController
 {
@@ -44,10 +45,10 @@ class EventRegistrationReminderController extends AbstractController
     private string $sid;
     private bool $allowWebScope;
     private int $maxNotificationsPerRequest;
-    private string $fallbackLanguage;
+    private string $defaultLocale;
     private ?LoggerInterface $logger;
 
-    public function __construct(ContaoFramework $framework, Connection $connection, DataCollector $dataCollector, NotificationGenerator $messageGenerator, NotificationHelper $notificationHelper, bool $disable, string $sid, bool $allowWebScope, int $maxNotificationsPerRequest, string $fallbackLanguage, ?LoggerInterface $logger)
+    public function __construct(ContaoFramework $framework, Connection $connection,  DataCollector $dataCollector, NotificationGenerator $messageGenerator, NotificationHelper $notificationHelper, bool $disable, string $sid, bool $allowWebScope, int $maxNotificationsPerRequest, string $defaultLocale, ?LoggerInterface $logger)
     {
         $this->framework = $framework;
         $this->connection = $connection;
@@ -58,13 +59,11 @@ class EventRegistrationReminderController extends AbstractController
         $this->sid = $sid;
         $this->allowWebScope = $allowWebScope;
         $this->maxNotificationsPerRequest = $maxNotificationsPerRequest;
-        $this->fallbackLanguage = $fallbackLanguage;
+        $this->defaultLocale = $defaultLocale;
         $this->logger = $logger;
     }
 
     /**
-     * @param string $sid
-     * @return Response
      * @throws Exception
      * @throws StringsException
      */
@@ -135,7 +134,7 @@ class EventRegistrationReminderController extends AbstractController
                             break 2;
                         }
 
-                        $arr = $this->notificationHelper->send($notification, $userId, $calendarId, $arrTokens, $this->fallbackLanguage);
+                        $arr = $this->notificationHelper->send($notification, $userId, $calendarId, $arrTokens, $this->defaultLocale);
 
                         if (!empty($arr) && \is_array($arr)) {
                             $userName = $this->connection->fetchOne('SELECT name FROM tl_user WHERE id = ?', [$userId]);
@@ -143,7 +142,7 @@ class EventRegistrationReminderController extends AbstractController
                             $set = [
                                 'tstamp' => time(),
                                 'addedOn' => time(),
-                                'title' => 'Reminder sent for '.$userName.'.',
+                                'title' => 'Sent a reminder to '.$userName.'.',
                                 'user' => $userId,
                                 'calendar' => $calendarId,
                             ];
@@ -181,8 +180,6 @@ class EventRegistrationReminderController extends AbstractController
     }
 
     /**
-     * @param int $calendarId
-     * @return Notification|null
      * @throws Exception
      */
     private function getNotification(int $calendarId): ?Notification

@@ -18,3 +18,4 @@ declare(strict_types=1);
 $GLOBALS['TL_LANG']['MSC']['serr_participant_female'] = 'Participant';
 $GLOBALS['TL_LANG']['MSC']['serr_participant_male'] = 'Participant';
 $GLOBALS['TL_LANG']['MSC']['serr_these_registrations_are_also_pending'] = 'These registrations are also pending:';
+$GLOBALS['TL_LANG']['MSC']['serr_days_registered'] = 'since %s day/days';

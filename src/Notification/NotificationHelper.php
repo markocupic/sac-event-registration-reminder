@@ -41,13 +41,13 @@ class NotificationHelper
      *
      * @return array
      */
-    public function send(Notification $notification, int $userId, int $calendarId,  array $arrTokens, string $fallbackLanguage)
+    public function send(Notification $notification, int $userId, int $calendarId,  array $arrTokens, string $defaultLocale)
     {
         $this->initialize($notification, $userId, $calendarId, $arrTokens);
 
         $this->prepareTokens();
 
-        $lang = $this->user->language ?: $fallbackLanguage;
+        $lang = $this->user->language ?: $defaultLocale;
 
         return $this->notification->send($this->tokens, $lang);
     }

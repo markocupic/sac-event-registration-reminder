@@ -38,7 +38,7 @@ class NotificationCron extends AbstractController
     }
 
     /**
-     * @CronJob("25 * * * *")
+     * @CronJob("10 * * * *")
      *
      * @throws Exception
      * @throws StringsException
@@ -54,7 +54,7 @@ class NotificationCron extends AbstractController
     }
 
     /**
-     * @CronJob("44 * * * *")
+     * @CronJob("40 * * * *")
      *
      * @throws Exception
      * @throws StringsException

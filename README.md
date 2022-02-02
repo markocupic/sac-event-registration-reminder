@@ -70,5 +70,5 @@ sac_evt_reg_reminder:
   sid: 'dasrwuefhsd567ewdsf3265667zte'
   allow_web_scope: false
   max_notifications_per_request: 100
-  fallback_language: 'de'
+  default_locale: 'de'
 ```
