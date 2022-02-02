@@ -12,12 +12,14 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/sac-event-registration-reminder
  */
 
-namespace Markocupic\SacEventRegistrationReminder\Data;
+namespace Markocupic\SacEventRegistrationReminder\Notification;
 
 use Contao\CalendarEventsMemberModel;
 use Contao\CalendarEventsModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\System;
 use Contao\UserModel;
+use Markocupic\SacEventRegistrationReminder\String\Sanitizer;
 use Safe\Exceptions\StringsException;
 use function Safe\sprintf;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,19 +28,23 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class MessageGenerator
+class NotificationGenerator
 {
     private ContaoFramework $framework;
     private Environment $twig;
     private TranslatorInterface $translator;
+    private Sanitizer $sanitizer;
     private ?array $data;
     private ?UserModel $user;
+    private string $fallbackLanguage;
 
-    public function __construct(ContaoFramework $framework, Environment $twig, TranslatorInterface $translator)
+    public function __construct(ContaoFramework $framework, Environment $twig, TranslatorInterface $translator, Sanitizer $sanitizer, string $fallbackLanguage)
     {
         $this->framework = $framework;
         $this->twig = $twig;
         $this->translator = $translator;
+        $this->sanitizer = $sanitizer;
+        $this->fallbackLanguage = $fallbackLanguage;
     }
 
     /**
@@ -67,6 +73,12 @@ class MessageGenerator
     {
         $arrData = [];
 
+        $locale = $this->user->language ?: $this->fallbackLanguage;
+
+        $systemAdapter = $this->framework->getAdapter(System::class);
+
+        $systemAdapter->loadLanguageFile('default', $locale);
+
         foreach ($this->data as $eventId => $arrEvent) {
             $event = CalendarEventsModel::findByPk($eventId);
 
@@ -75,8 +87,8 @@ class MessageGenerator
             }
 
             $rowEvent = [];
-            $rowEvent['event_title'] = $event->title;
-            $rowEvent['trans']['event_type'] = $this->translator->trans('MSC.'.$event->eventType,[],'contao_default');
+            $rowEvent['event_title'] = $this->sanitizer->sanitize($event->title);
+            $rowEvent['trans']['event_type'] = $this->translator->trans('MSC.'.$event->eventType, [], 'contao_default', $locale);
 
             $rowEvent['registrations_outside_deadline'] = [];
             $rowEvent['registrations_within_deadline'] = [];
@@ -92,12 +104,13 @@ class MessageGenerator
                     }
 
                     $rowEvent['registrations_'.$deadlineKey][] = [
+                        'user_locale' => $locale,
                         'firstname' => $registration->firstname,
                         'lastname' => $registration->lastname,
                         'sac_member_id' => $registration->sacMemberId,
                         'registered_since' => (string) ceil((time() - (int) $registration->addedOn) / strtotime('1 day', 0)),
                         'trans' => [
-                            'participant' => 'female' === $registration->user->gender ? $this->translator->trans('MSC.serr_participant_female', [], 'contao_default') : $this->translator->trans('MSC.serr_participant_male', [], 'contao_default'),
+                            'participant' => 'female' === $registration->user->gender ? $this->translator->trans('MSC.serr_participant_female', [], 'contao_default', $locale) : $this->translator->trans('MSC.serr_participant_male', [], 'contao_default', $locale),
                         ],
                     ];
                 }

@@ -12,8 +12,9 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/sac-event-registration-reminder
  */
 
-namespace Markocupic\SacEventRegistrationReminder\Util;
+namespace Markocupic\SacEventRegistrationReminder\Notification;
 
+use Contao\CalendarModel;
 use Contao\UserModel;
 use Doctrine\DBAL\Connection;
 use NotificationCenter\Model\Notification;
@@ -40,24 +41,30 @@ class NotificationHelper
      *
      * @return array
      */
-    public function send(Notification $notification, int $userId, array $arrTokens)
+    public function send(Notification $notification, int $userId, int $calendarId,  array $arrTokens, string $fallbackLanguage)
     {
-        $this->initialize($notification, $userId, $arrTokens);
+        $this->initialize($notification, $userId, $calendarId, $arrTokens);
 
         $this->prepareTokens();
 
-        return $this->notification->send($this->tokens);
+        $lang = $this->user->language ?: $fallbackLanguage;
+
+        return $this->notification->send($this->tokens, $lang);
     }
 
     /**
      * @throws StringsException
      */
-    private function initialize(Notification $notification, int $userId, array $arrTokens): void
+    private function initialize(Notification $notification, int $userId, int $calendarId, array $arrTokens): void
     {
         $this->notification = $notification;
 
         if (null === ($this->user = UserModel::findByPk($userId))) {
             throw new \Exception(sprintf('User with ID %s not found', $userId));
+        }
+
+        if (null === ($this->calendar = CalendarModel::findByPk($calendarId))) {
+            throw new \Exception(sprintf('Calendar with ID %s not found', $calendarId));
         }
 
         $this->tokens = $arrTokens;
@@ -70,5 +77,6 @@ class NotificationHelper
         $this->tokens['instructor_firstname'] = $this->user->firstname;
         $this->tokens['instructor_lastname'] = $this->user->lastname;
         $this->tokens['instructor_name'] = $this->user->name;
+        $this->tokens['send_reminder_each'] = $this->calendar->sendReminderEach;
     }
 }

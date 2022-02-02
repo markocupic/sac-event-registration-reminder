@@ -15,5 +15,4 @@ declare(strict_types=1);
 /*
  * Backend modules
  */
-$GLOBALS['TL_LANG']['MOD']['kat_registration_reminder'] = 'Registration Reminder';
-$GLOBALS['TL_LANG']['MOD']['event_registration_reminder_notification'] = ['Benachrichtigungen', 'Administrieren Sie die Benachrichtigungen an die Tourenleiter'];
+$GLOBALS['TL_LANG']['MOD']['event_registration_reminder_notification'] = ['Benach. TL bei vers. Best.', 'Administrieren Sie die Benachrichtigungen an die Tourenleiter bei versäumter Bearbeitung von Event-Anmeldungen.'];

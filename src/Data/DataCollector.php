@@ -12,7 +12,7 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/sac-event-registration-reminder
  */
 
-namespace Markocupic\SacEventRegistrationReminder\Util;
+namespace Markocupic\SacEventRegistrationReminder\Data;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -54,8 +54,8 @@ class DataCollector
             $timeLimit = time() - (int) $timeLimitD * 24 * 3600;
             $sendEach = (int) $sendEachD * 24 * 3600;
 
-
             foreach ($arrUsers as $userId) {
+
                 $blnSend = false;
 
                 $arrData[$calendarId][$userId] = [];
@@ -118,12 +118,11 @@ class DataCollector
 
         // Do not send reminders if user is still within the sendReminderEach time limit
         $result = $this->connection->fetchOne(
-            'SELECT user FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ? AND addedOn > ?',
-            [$userId, $calendarId, $limit],
+            'SELECT user FROM tl_event_registration_reminder_notification WHERE addedOn > ? AND user = ? AND calendar = ?',
+            [$limit, $userId, $calendarId],
         );
 
-        if($result)
-        {
+        if ($result > 0) {
             return [];
         }
 
@@ -142,7 +141,7 @@ class DataCollector
             [$calendarId, time(), '1', 0, '1', $userId]
         );
 
-        return array_unique(array_merge($arr1,$arr2));
+        return array_unique(array_merge($arr1, $arr2));
     }
 
     /**

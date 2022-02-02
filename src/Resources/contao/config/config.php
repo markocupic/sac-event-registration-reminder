@@ -17,7 +17,7 @@ use Markocupic\SacEventRegistrationReminder\Model\EventRegistrationReminderNotif
 /*
  * Backend modules
  */
-$GLOBALS['BE_MOD']['kat_registration_reminder']['event_registration_reminder_notification'] = [
+$GLOBALS['BE_MOD']['sac_be_modules']['event_registration_reminder_notification'] = [
     'tables' => ['tl_event_registration_reminder_notification'],
 ];
 
@@ -35,7 +35,7 @@ $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['sac_event_tool']['event_re
     'email_sender_address' => ['admin_email'],
     'recipients' => ['instructor_email', 'admin_email'],
     'email_replyTo' => [],
-    'email_subject' => [],
-    'email_text' => ['instructor_firstname', 'instructor_lastname', 'instructor_name', 'registrations'],
-    'email_html' => ['instructor_firstname', 'instructor_lastname', 'instructor_name', 'registrations'],
+    'email_subject' => ['send_reminder_each'],
+    'email_text' => ['instructor_firstname', 'instructor_lastname', 'instructor_name', 'registrations', 'send_reminder_each'],
+    'email_html' => ['instructor_firstname', 'instructor_lastname', 'instructor_name', 'registrations', 'send_reminder_each'],
 ];

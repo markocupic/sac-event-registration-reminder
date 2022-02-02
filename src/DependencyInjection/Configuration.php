@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /*
  * This file is part of SAC Event Registration Reminder.
- * 
+ *
  * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
@@ -19,7 +19,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_KEY = 'markocupic_sac_event_registration_reminder';
+    public const ROOT_KEY = 'sac_evt_reg_reminder';
 
     public function getConfigTreeBuilder()
     {
@@ -27,15 +27,27 @@ class Configuration implements ConfigurationInterface
 
         $treeBuilder->getRootNode()
             ->children()
-                ->arrayNode('foo')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('bar')
-                            ->cannotBeEmpty()
-                            ->defaultValue('***')
-                        ->end()
-                    ->end()
-                ->end() // end foo
+                ->booleanNode('disable')
+                    ->info('Disable the application globally.')
+                    ->defaultValue(false)
+                ->end()
+                ->scalarNode('sid')
+                    ->info('SID -> https://domain.com/_event_registration_reminder/{sid}')
+                    ->cannotBeEmpty()
+                ->end()
+                ->booleanNode('allow_web_scope')
+                    ->info('Allow running CRON in webscope.')
+                    ->defaultValue(true)
+                ->end()
+                ->integerNode('max_notifications_per_request')
+                    ->info('Add a limit for sending email per request.')
+                    ->defaultValue(100)
+                ->end()
+                ->scalarNode('fallback_language')
+                    ->info('Add a fallback language (notification center).')
+                    ->cannotBeEmpty()
+                    ->defaultValue('de')
+                ->end()
             ->end()
         ;
 

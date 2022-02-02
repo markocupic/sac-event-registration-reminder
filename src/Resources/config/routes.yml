@@ -1,4 +1,4 @@
-# config/routes.yml
+#config/routes.yml
 markocupic_sac_event_registration_reminder.controller:
     resource: ../../../src/Controller
     type: annotation

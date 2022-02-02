@@ -23,6 +23,4 @@ $GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['first_legend
 $GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['title'] = ['Title', 'Add a title please'];
 $GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['calendar'] = ['Calendar', 'Select a calendar.'];
 $GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['user'] = ['User', 'Select a user.'];
-$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['multitextField'] = ['Multitext Feld', 'Geben Sie die Werte ein'];
-$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['addedOn'] = ['Added On', 'Add the insert record time.'];
-
+$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['addedOn'] = ['Added On', 'Add the "insert record" time.'];

@@ -3,17 +3,14 @@ services:
         autowire: true
         autoconfigure: true
         bind:
-            #$projectDir: '%kernel.project_dir%'
+            $disable: '%sac_evt_reg_reminder.disable%'
+            $allowWebScope: '%sac_evt_reg_reminder.allow_web_scope%'
+            $sid: '%sac_evt_reg_reminder.sid%'
+            $maxNotificationsPerRequest: '%sac_evt_reg_reminder.max_notifications_per_request%'
+            $fallbackLanguage: '%sac_evt_reg_reminder.fallback_language%'
 
     Markocupic\SacEventRegistrationReminder\:
         resource: ../../
         exclude: ../../{DependencyInjection,Resources,Model,Data/Data.php}
-
-    # Custom route
-    Markocupic\SacEventRegistrationReminder\Controller\MyCustomController:
-        public: true
-        # Since Symfony 5 the container has to be set manually
-        calls:
-            - [ setContainer, [ '@Psr\Container\ContainerInterface' ] ]
 
 

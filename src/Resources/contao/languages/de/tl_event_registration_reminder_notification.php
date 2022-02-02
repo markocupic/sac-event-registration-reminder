@@ -20,7 +20,7 @@ $GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['first_legend
 /*
  * Fields
  */
-$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['title'] = ['Titel', 'Geben Sie den Titel ein'];
-$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['calendar'] = ['Calendar', 'Select a calendar.'];
-$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['user'] = ['User', 'Select a user.'];
-$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['addedOn'] = ['Added On', 'Add the insert record time.'];
+$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['title'] = ['Titel', 'Geben Sie bitte den Titel ein.'];
+$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['calendar'] = ['Kalender auswählen', 'Bitte wählen Sie den Kalender aus.'];
+$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['user'] = ['Benutzer', 'Wählen Sie den Benutzer aus.'];
+$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['addedOn'] = ['Hinzugefügt am', 'Bitte geben Sie das Datum des Versandes der Benachrichtigung an.'];

@@ -11,17 +11,10 @@ declare(strict_types=1);
  * please view the LICENSE file that was distributed with this source code.
  * @link https://github.com/markocupic/sac-event-registration-reminder
  */
+
 /*
- * Miscelaneous
+ * Miscellaneous
  */
 $GLOBALS['TL_LANG']['MSC']['serr_participant_female'] = 'Participant';
 $GLOBALS['TL_LANG']['MSC']['serr_participant_male'] = 'Participant';
-$GLOBALS['TL_LANG']['MSC']['serr_these_registrations_are_also_pending'] = 'These registrations are also pending';
-
-
-
-
-/*
- * Errors
- */
-$GLOBALS['TL_LANG']['ERR'][''] = '';
+$GLOBALS['TL_LANG']['MSC']['serr_these_registrations_are_also_pending'] = 'These registrations are also pending:';

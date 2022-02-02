@@ -15,11 +15,6 @@ declare(strict_types=1);
 /*
  * Miscelaneous
  */
-$GLOBALS['TL_LANG']['MSC']['serr_participant_female'] = 'Participant';
-$GLOBALS['TL_LANG']['MSC']['serr_participant_male'] = 'Participant';
-$GLOBALS['TL_LANG']['MSC']['serr_these_registrations_are_also_pending'] = 'These registrations are also pending';
-
-/*
- * Errors
- */
-$GLOBALS['TL_LANG']['ERR'][''] = '';
+$GLOBALS['TL_LANG']['MSC']['serr_participant_female'] = 'Teilnehmerin';
+$GLOBALS['TL_LANG']['MSC']['serr_participant_male'] = 'Teilnehmer';
+$GLOBALS['TL_LANG']['MSC']['serr_these_registrations_are_also_pending'] = 'Diese Registrierungen zur selben Tour sind ebenfalls noch hängig:';
