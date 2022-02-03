@@ -98,7 +98,7 @@ class NotificationGenerator
                         continue;
                     }
 
-                    $daysRegistered = ceil((time() - (int) $registration->addedOn) / 86400);
+                    $daysRegistered = floor((time() - (int) $registration->addedOn) / 86400);
 
                     $rowEvent['registrations_'.$deadlineKey][] = [
                         'firstname' => $registration->firstname,
