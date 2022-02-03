@@ -30,12 +30,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class NotificationCron extends AbstractController
 {
     private UrlGeneratorInterface $router;
+    private string $cronSchedule;
     private bool $allowWebScope;
     private string $sid;
 
-    public function __construct(UrlGeneratorInterface $router, bool $allowWebScope, string $sid)
+    public function __construct(UrlGeneratorInterface $router, string $cronSchedule, bool $allowWebScope, string $sid)
     {
         $this->router = $router;
+        $this->cronSchedule = $cronSchedule;
         $this->allowWebScope = $allowWebScope;
         $this->sid = $sid;
     }

@@ -65,4 +65,5 @@ sac_evt_reg_reminder:
   allow_web_scope: false
   notification_limit_per_request: 100
   default_locale: 'de'
+  cron_scheduel: '15 23 * * *' # every day at 11:15 pm
 ```

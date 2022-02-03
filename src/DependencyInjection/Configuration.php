@@ -48,6 +48,11 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                     ->defaultValue('de')
                 ->end()
+                ->scalarNode('cron_schedule')
+                    ->info('Add the cron schedule e.g.: 55 * * * *')
+                    ->cannotBeEmpty()
+                    ->defaultValue('55 * * * *')
+                ->end()
             ->end()
         ;
 
