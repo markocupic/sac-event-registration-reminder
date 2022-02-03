@@ -18,6 +18,7 @@ use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
+use Markocupic\SacEventRegistrationReminder\MarkocupicSacEventRegistrationReminder;
 use Markocupic\SacEventToolBundle\MarkocupicSacEventToolBundle;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -34,7 +35,7 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create('Markocupic\SacEventRegistrationReminder\MarkocupicSacEventRegistrationReminder')
+            BundleConfig::create(MarkocupicSacEventRegistrationReminder::class)
                 ->setLoadAfter([
                     ContaoCoreBundle::class,
                     MarkocupicSacEventToolBundle::class,
