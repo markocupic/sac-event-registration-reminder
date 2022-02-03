@@ -30,7 +30,7 @@ Ein paar Punkte dazu als Input:
 
 
 # E-Mail-Beispiel "Reminder für unbearbeitete Event-Anmeldungen":
---------------------
+
 Hallo Martin
 
 Du hast für einen oder mehrere Events den Status

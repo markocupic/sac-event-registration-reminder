@@ -16,11 +16,10 @@ namespace Markocupic\SacEventRegistrationReminder\Notification;
 
 use Contao\CalendarEventsMemberModel;
 use Contao\CalendarEventsModel;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\UserModel;
 use Markocupic\SacEventRegistrationReminder\String\Sanitizer;
 use Safe\Exceptions\StringsException;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use function Safe\sprintf;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -30,14 +29,16 @@ use Twig\Error\SyntaxError;
 
 class NotificationGenerator
 {
+    private ContaoFramework $framework;
     private Environment $twig;
     private TranslatorInterface $translator;
     private Sanitizer $sanitizer;
     private ?array $data;
     private ?UserModel $user;
 
-    public function __construct(Environment $twig, TranslatorInterface $translator, Sanitizer $sanitizer)
+    public function __construct(ContaoFramework $framework, Environment $twig, TranslatorInterface $translator, Sanitizer $sanitizer)
     {
+        $this->framework = $framework;
         $this->twig = $twig;
         $this->translator = $translator;
         $this->sanitizer = $sanitizer;
@@ -54,17 +55,15 @@ class NotificationGenerator
     }
 
     /**
-     * @param array $arrData
-     * @param int $userId
-     * @return void
      * @throws StringsException
      */
     private function initialize(array $arrData, int $userId): void
     {
-
         $this->data = $arrData;
 
-        if (null === ($this->user = UserModel::findByPk($userId))) {
+        $userModelAdapter = $this->framework->getAdapter(UserModel::class);
+
+        if (null === ($this->user = $userModelAdapter->findByPk($userId))) {
             throw new \Exception(sprintf('User with ID %s not found', $userId));
         }
     }
@@ -73,8 +72,10 @@ class NotificationGenerator
     {
         $arrData = [];
 
+        $calendarEventsModelAdapter = $this->framework->getAdapter(CalendarEventsModel::class);
+
         foreach ($this->data as $eventId => $arrEvent) {
-            $event = CalendarEventsModel::findByPk($eventId);
+            $event = $calendarEventsModelAdapter->findByPk($eventId);
 
             if (null === $event) {
                 continue;
@@ -97,14 +98,14 @@ class NotificationGenerator
                         continue;
                     }
 
-                    $daysRegistered = (string) ceil((time() - (int) $registration->addedOn) / strtotime('1 day', 0));
+                    $daysRegistered = ceil((time() - (int) $registration->addedOn) / 86400);
 
                     $rowEvent['registrations_'.$deadlineKey][] = [
                         'firstname' => $registration->firstname,
                         'lastname' => $registration->lastname,
                         'sac_member_id' => $registration->sacMemberId,
                         'trans' => [
-                            'days_registered' => $this->translator->trans('MSC.serr_days_registered', [$daysRegistered], 'contao_default','de'),
+                            'days_registered' => $this->translator->trans('MSC.serr_days_registered', [$daysRegistered], 'contao_default'),
                             'participant' => 'female' === $registration->gender ? $this->translator->trans('MSC.serr_participant_female', [], 'contao_default') : $this->translator->trans('MSC.serr_participant_male', [], 'contao_default'),
                         ],
                     ];

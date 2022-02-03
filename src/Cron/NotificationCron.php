@@ -17,14 +17,12 @@ namespace Markocupic\SacEventRegistrationReminder\Cron;
 use Contao\CoreBundle\Cron\Cron;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\ServiceAnnotation\CronJob;
-use Doctrine\DBAL\Exception;
 use Markocupic\SacEventRegistrationReminder\Controller\EventRegistrationReminderController;
-use Safe\Exceptions\StringsException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * @CronJob("*\/2 * * * *")
+ * @CronJob("*\/5 * * * *")
  *
  * We use a real cronjob:
  * wget -q -O /dev/null 'https://<domain>/_contao/cron' >/dev/null 2>&1.
@@ -42,10 +40,6 @@ class NotificationCron extends AbstractController
         $this->sid = $sid;
     }
 
-    /**
-     * @param string $scope
-     * @return void
-     */
     public function __invoke(string $scope): void
     {
         // Do not execute this cron job in the web scope

@@ -2,7 +2,7 @@
 -----------------------------------------------------
 {{ event.trans.event_type }}: {{ event.event_title }}
     {% for registration in event.registrations_outside_deadline %}
-    - {{ registration.trans.participant }} {{ registration.firstname }} {{ registration.lastname }}, {{ registration.sac_member_id }} (seit {{ registration.registered_since }} Tag/Tagen)
+    - {{ registration.trans.participant }} {{ registration.firstname }} {{ registration.lastname }}, {{ registration.sac_member_id }} ({{ registration.trans.days_registered }})
     {% endfor %}
 
     {% if event.has_registrations_within_deadline %}

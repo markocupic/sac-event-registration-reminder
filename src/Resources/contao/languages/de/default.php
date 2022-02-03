@@ -13,9 +13,9 @@ declare(strict_types=1);
  */
 
 /*
- * Miscelaneous
+ * Miscellaneous
  */
 $GLOBALS['TL_LANG']['MSC']['serr_participant_female'] = 'Teilnehmerin';
 $GLOBALS['TL_LANG']['MSC']['serr_participant_male'] = 'Teilnehmer';
 $GLOBALS['TL_LANG']['MSC']['serr_these_registrations_are_also_pending'] = 'Diese Registrierungen zur selben Tour sind ebenfalls noch hängig:';
-$GLOBALS['TL_LANG']['MSC']['serr_days_registered'] = 'seit %s Tag/Tagen';
+$GLOBALS['TL_LANG']['MSC']['serr_days_registered'] = 'seit %d Tag/Tagen';

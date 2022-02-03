@@ -49,6 +49,5 @@
     },
     "extra": {
         "contao-manager-plugin": "Markocupic\\SacEventRegistrationReminder\\ContaoManager\\Plugin"
-    },
-    "version": "1.0"
+    }
 }
