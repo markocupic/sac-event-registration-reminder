@@ -2,7 +2,7 @@
 
 /*
  * This file is part of SAC Event Registration Reminder.
- * 
+ *
  * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
@@ -36,7 +36,7 @@ class PluginTest extends ContaoTestCase
     }
 
     /**
-     * Test returns the bundles
+     * Test returns the bundles.
      */
     public function testGetBundles(): void
     {
@@ -48,7 +48,7 @@ class PluginTest extends ContaoTestCase
         $this->assertCount(1, $bundles);
         $this->assertInstanceOf(BundleConfig::class, $bundles[0]);
         $this->assertSame(MarkocupicSacEventRegistrationReminder::class, $bundles[0]->getName());
-        $this->assertSame([ContaoCoreBundle::class], $bundles[0]->getLoadAfter());
+        $this->assertSame([ContaoCoreBundle::class,MarkocupicSacEventToolBundle::class], $bundles[0]->getLoadAfter());
     }
 
 }
