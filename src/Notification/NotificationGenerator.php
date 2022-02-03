@@ -19,6 +19,8 @@ use Contao\CalendarEventsModel;
 use Contao\UserModel;
 use Markocupic\SacEventRegistrationReminder\String\Sanitizer;
 use Safe\Exceptions\StringsException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use function Safe\sprintf;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -52,10 +54,14 @@ class NotificationGenerator
     }
 
     /**
+     * @param array $arrData
+     * @param int $userId
+     * @return void
      * @throws StringsException
      */
     private function initialize(array $arrData, int $userId): void
     {
+
         $this->data = $arrData;
 
         if (null === ($this->user = UserModel::findByPk($userId))) {
@@ -98,7 +104,7 @@ class NotificationGenerator
                         'lastname' => $registration->lastname,
                         'sac_member_id' => $registration->sacMemberId,
                         'trans' => [
-                            'days_registered' => $this->translator->trans('MSC.serr_days_registered', [$daysRegistered], 'contao_default'),
+                            'days_registered' => $this->translator->trans('MSC.serr_days_registered', [$daysRegistered], 'contao_default','de'),
                             'participant' => 'female' === $registration->gender ? $this->translator->trans('MSC.serr_participant_female', [], 'contao_default') : $this->translator->trans('MSC.serr_participant_male', [], 'contao_default'),
                         ],
                     ];

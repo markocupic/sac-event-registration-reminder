@@ -27,12 +27,11 @@ use NotificationCenter\Model\Notification;
 use Psr\Log\LoggerInterface;
 use Safe\Exceptions\StringsException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/_event_registration_reminder/{sid}", methods={"GET"}, defaults={"_locale":"%sac_evt_reg_reminder.default_locale%"})
+ * @Route("/_event_registration_reminder/{sid}", name=EventRegistrationReminderController::class, methods={"GET"}, defaults={"_locale":"%sac_evt_reg_reminder.default_locale%"})
  */
 class EventRegistrationReminderController extends AbstractController
 {
@@ -43,12 +42,11 @@ class EventRegistrationReminderController extends AbstractController
     private NotificationHelper $notificationHelper;
     private bool $disable;
     private string $sid;
-    private bool $allowWebScope;
     private int $maxNotificationsPerRequest;
     private string $defaultLocale;
     private ?LoggerInterface $logger;
 
-    public function __construct(ContaoFramework $framework, Connection $connection,  DataCollector $dataCollector, NotificationGenerator $messageGenerator, NotificationHelper $notificationHelper, bool $disable, string $sid, bool $allowWebScope, int $maxNotificationsPerRequest, string $defaultLocale, ?LoggerInterface $logger)
+    public function __construct(ContaoFramework $framework, Connection $connection, DataCollector $dataCollector, NotificationGenerator $messageGenerator, NotificationHelper $notificationHelper, bool $disable, string $sid, int $maxNotificationsPerRequest, string $defaultLocale, ?LoggerInterface $logger)
     {
         $this->framework = $framework;
         $this->connection = $connection;
@@ -57,13 +55,14 @@ class EventRegistrationReminderController extends AbstractController
         $this->notificationHelper = $notificationHelper;
         $this->disable = $disable;
         $this->sid = $sid;
-        $this->allowWebScope = $allowWebScope;
         $this->maxNotificationsPerRequest = $maxNotificationsPerRequest;
         $this->defaultLocale = $defaultLocale;
         $this->logger = $logger;
     }
 
     /**
+     * @param string $sid
+     * @return Response
      * @throws Exception
      * @throws StringsException
      */
@@ -172,7 +171,7 @@ class EventRegistrationReminderController extends AbstractController
         }
 
         // Log and send a response
-        $responseMsg = sprintf('Traversed %s users and send %s notifications. Script runtime: %s s.', $userCount, $emailCount, time() - $start);
+        $responseMsg = sprintf('Traversed %s users and sent %s notifications. Script runtime: %s s.', $userCount, $emailCount, time() - $start);
 
         $this->log($responseMsg);
 

@@ -6,13 +6,13 @@
 Hintergrund:
 Von diversen Teilnehmenden hört man, dass es Tourenleiten/innen und auch Bergführer/innen gibt,
   welche mehrere Wochen bis sogar mehrere Monate mit einer Zu- oder Absage für Touren und Kursen zuwarten.
-  Die Teilnehmende ärgern sich darüber (insb. auch ohne Antwort auf E-Mails).
-  Es liegt daher auf der Hand, dass hier etwas nachgebessert werden sollte.
+  Die Teilnehmende ärgern sich darüber (insb. auch wegen ausbleibender Antwort auf E-Mail Anfragen).
+  Diesbezüglich ist deshalb noch Optimierungspotenzial vorhanden.
 
 Folgende Idee:
 Es wird ein Reminder-Tool benötigt, welches Tourenleitende und Bergführer/innen per E-Mail daran erinnert,
-  dass diese noch unbearbeitete Registrierungen (nicht angenommen/abgelehnt und nicht auf Warteliste gesetzt) bei Touren/Kursen haben,
-  welche sich vor mehr als 7 Tagen (einstellbar) angemeldet haben.
+  dass diese noch unbearbeitete Registrierungen (nicht angenommen/abgelehnt und nicht auf Warteliste gesetzt) für Touren/Kurse haben,
+  die sie seit mehr als 7 Tagen (einstellbar) nicht bearbeitet haben.
 
 Ein paar Punkte dazu als Input:
 - Reminder E-Mail wird nach einer definierten Zeitperiode (z.B. jede Woche) an Organisator geschickt

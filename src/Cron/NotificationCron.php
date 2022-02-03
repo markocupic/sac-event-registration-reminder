@@ -15,80 +15,52 @@ declare(strict_types=1);
 namespace Markocupic\SacEventRegistrationReminder\Cron;
 
 use Contao\CoreBundle\Cron\Cron;
+use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\ServiceAnnotation\CronJob;
 use Doctrine\DBAL\Exception;
 use Markocupic\SacEventRegistrationReminder\Controller\EventRegistrationReminderController;
 use Safe\Exceptions\StringsException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
+ * @CronJob("*\/2 * * * *")
+ *
  * We use a real cronjob:
  * wget -q -O /dev/null 'https://<domain>/_contao/cron' >/dev/null 2>&1.
  */
 class NotificationCron extends AbstractController
 {
-    private RequestStack $requestStack;
-    private EventRegistrationReminderController $eventRegistrationReminderController;
-    private string $defaultLocale;
+    private UrlGeneratorInterface $router;
     private bool $allowWebScope;
+    private string $sid;
 
-    public function __construct(RequestStack $requestStack, EventRegistrationReminderController $eventRegistrationReminderController, string $defaultLocale, bool $allowWebScope)
+    public function __construct(UrlGeneratorInterface $router, bool $allowWebScope, string $sid)
     {
-        $this->requestStack = $requestStack;
-        $this->eventRegistrationReminderController = $eventRegistrationReminderController;
-        $this->defaultLocale = $defaultLocale;
+        $this->router = $router;
         $this->allowWebScope = $allowWebScope;
+        $this->sid = $sid;
     }
 
     /**
-     * @CronJob("10 * * * *", defaults={"_locale":"%sac_evt_reg_reminder.default_locale%"})
-     *
-     * @throws Exception
-     * @throws StringsException
+     * @param string $scope
+     * @return void
      */
-    public function cron1(string $scope): Response
+    public function __invoke(string $scope): void
     {
-        return;
         // Do not execute this cron job in the web scope
         if (Cron::SCOPE_WEB === $scope && !$this->allowWebScope) {
-            return new Response('Application not allowed in web mode.');
+            return;
         }
 
-        $request = $this->requestStack->getCurrentRequest();
+        $url = $this->router
+            ->generate(
+                EventRegistrationReminderController::class,
+                ['sid' => $this->sid],
+            )
+        ;
 
-        if ($request) {
-            $request->setLocale($this->defaultLocale);
-
-            return $this->eventRegistrationReminderController->run();
-        }
-
-        return new Response('No request detected');
-    }
-
-    /**
-     * @CronJob("40 * * * *" defaults={"_locale":"%sac_evt_reg_reminder.default_locale%"})
-     *
-     * @throws Exception
-     * @throws StringsException
-     */
-    public function cron(string $scope): Response
-    {
-        return;
-        // Do not execute this cron job in the web scope
-        if (Cron::SCOPE_WEB === $scope && !$this->allowWebScope) {
-            return new Response('Application not allowed in web mode.');
-        }
-
-        $request = $this->requestStack->getCurrentRequest();
-
-        if ($request) {
-            $request->setLocale($this->defaultLocale);
-
-            return $this->eventRegistrationReminderController->run();
-        }
-
-        return new Response('No request detected');
+        // Redirect to the controller
+        throw new RedirectResponseException($url);
     }
 }
