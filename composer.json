@@ -23,7 +23,8 @@
     },
     "require": {
         "contao/core-bundle": "^4.9",
-        "markocupic/sac-event-tool-bundle": "*"
+        "markocupic/sac-event-tool-bundle": "*",
+        "terminal42/notification_center": "*"
     },
     "require-dev": {
         "contao/manager-plugin": "^2.3",

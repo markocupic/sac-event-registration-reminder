@@ -42,11 +42,11 @@ class EventRegistrationReminderController extends AbstractController
     private NotificationHelper $notificationHelper;
     private bool $disable;
     private string $sid;
-    private int $maxNotificationsPerRequest;
+    private int $notificationLimitPerRequest;
     private string $defaultLocale;
     private ?LoggerInterface $logger;
 
-    public function __construct(ContaoFramework $framework, Connection $connection, DataCollector $dataCollector, NotificationGenerator $messageGenerator, NotificationHelper $notificationHelper, bool $disable, string $sid, int $maxNotificationsPerRequest, string $defaultLocale, ?LoggerInterface $logger)
+    public function __construct(ContaoFramework $framework, Connection $connection, DataCollector $dataCollector, NotificationGenerator $messageGenerator, NotificationHelper $notificationHelper, bool $disable, string $sid, int $notificationLimitPerRequest, string $defaultLocale, ?LoggerInterface $logger)
     {
         $this->framework = $framework;
         $this->connection = $connection;
@@ -55,7 +55,7 @@ class EventRegistrationReminderController extends AbstractController
         $this->notificationHelper = $notificationHelper;
         $this->disable = $disable;
         $this->sid = $sid;
-        $this->maxNotificationsPerRequest = $maxNotificationsPerRequest;
+        $this->notificationLimitPerRequest = $notificationLimitPerRequest;
         $this->defaultLocale = $defaultLocale;
         $this->logger = $logger;
     }
@@ -129,7 +129,7 @@ class EventRegistrationReminderController extends AbstractController
                         // The notification limit is adjustable (Symfony Friendly Configuration)
                         ++$emailCount;
 
-                        if ($emailCount > $this->maxNotificationsPerRequest) {
+                        if ($emailCount > $this->notificationLimitPerRequest) {
                             break 2;
                         }
 

@@ -6,7 +6,7 @@ services:
             $disable: '%sac_evt_reg_reminder.disable%'
             $allowWebScope: '%sac_evt_reg_reminder.allow_web_scope%'
             $sid: '%sac_evt_reg_reminder.sid%'
-            $maxNotificationsPerRequest: '%sac_evt_reg_reminder.max_notifications_per_request%'
+            $notificationLimitPerRequest: '%sac_evt_reg_reminder.notification_limit_per_request%'
             $defaultLocale: '%sac_evt_reg_reminder.default_locale%'
 
     Markocupic\SacEventRegistrationReminder\:

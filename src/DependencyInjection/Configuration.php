@@ -39,7 +39,7 @@ class Configuration implements ConfigurationInterface
                     ->info('Allow running CRON in webscope.')
                     ->defaultValue(true)
                 ->end()
-                ->integerNode('max_notifications_per_request')
+                ->integerNode('notification_limit_per_request')
                     ->info('Add a limit for sending email per request.')
                     ->defaultValue(100)
                 ->end()

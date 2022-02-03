@@ -63,6 +63,6 @@ sac_evt_reg_reminder:
   disable: false
   sid: 'dasrwuefhsd567ewdsf3265667zte'
   allow_web_scope: false
-  max_notifications_per_request: 100
+  notification_limit_per_request: 100
   default_locale: 'de'
 ```
