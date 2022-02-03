@@ -3,12 +3,6 @@
 
 # SAC Event Registration Reminder
 
-Hintergrund:
-Von diversen Teilnehmenden hört man, dass es Tourenleiten/innen und auch Bergführer/innen gibt,
-  welche mehrere Wochen bis sogar mehrere Monate mit einer Zu- oder Absage für Touren und Kursen zuwarten.
-  Die Teilnehmende ärgern sich darüber (insb. auch wegen ausbleibender Antwort auf E-Mail Anfragen).
-  Diesbezüglich ist deshalb noch Optimierungspotenzial vorhanden.
-
 Folgende Idee:
 Es wird ein Reminder-Tool benötigt, welches Tourenleitende und Bergführer/innen per E-Mail daran erinnert,
   dass diese noch unbearbeitete Registrierungen (nicht angenommen/abgelehnt und nicht auf Warteliste gesetzt) für Touren/Kurse haben,
