@@ -20,8 +20,7 @@ $GLOBALS['TL_LANG']['tl_calendar']['event_registration_reminder_legend'] = 'Sett
 /*
  * Fields
  */
-$GLOBALS['TL_LANG']['tl_calendar']['enableInstructorReminderNotification'] = ['Enable reminder tool', '
-If the Remider Tool is activated, event managers will be informed at regular intervals by e-mail that they still have unprocessed participant requests in the event tool.'];
+$GLOBALS['TL_LANG']['tl_calendar']['enableInstructorReminderNotification'] = ['Enable reminder tool', 'If the Remider Tool is activated, event managers will be informed at regular intervals by e-mail that they still have unprocessed participant requests in the event tool.'];
 $GLOBALS['TL_LANG']['tl_calendar']['sendFirstReminderAfter'] = ['Send  first reminder after x days', 'Please set the number of days after which the first notification should be sent to the event organizer in case he has unprocessed event participation requests.'];
 $GLOBALS['TL_LANG']['tl_calendar']['sendReminderEach'] = ['Notification interval in days', 'Set the notification interval in number of days here.'];
 $GLOBALS['TL_LANG']['tl_calendar']['sendReminderNotification'] = ['Notification', 'Please select the notification.'];
