@@ -49,9 +49,9 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('de')
                 ->end()
                 ->scalarNode('cron_schedule')
-                    ->info('Add the cron schedule e.g.: 55 * * * *')
+                    ->info('Add the cron schedule e.g.: 30 4 * * *')
                     ->cannotBeEmpty()
-                    ->defaultValue('55 * * * *')
+                    ->defaultValue('30 4 * * *')
                 ->end()
             ->end()
         ;

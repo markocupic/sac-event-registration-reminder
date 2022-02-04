@@ -59,5 +59,37 @@ class MarkocupicSacEventRegistrationReminderExtension extends Extension
         $container->setParameter($rootKey.'.default_locale', $config['default_locale']);
         $container->setParameter($rootKey.'.cron_schedule', $config['cron_schedule']);
 
+        $this->addCronSchedule($container, $config);
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @return void
+     */
+    private function addCronSchedule(ContainerBuilder $container): void
+    {
+        if(!$container->has('Markocupic\SacEventRegistrationReminder\Cron\NotificationCron'))
+        {
+            return;
+        }
+
+        if(!$container->hasParameter('sac_evt_reg_reminder.cron_schedule'))
+        {
+            return;
+        }
+
+        $cronSchedule = $container
+            ->getParameter('sac_evt_reg_reminder.cron_schedule')
+        ;
+
+        $cron = $container
+            ->findDefinition('Markocupic\SacEventRegistrationReminder\Cron\NotificationCron')
+        ;
+
+        $cron->clearTag('contao.cronjob');
+
+        $cron->addTag('contao.cronjob', [
+            'interval' => $cronSchedule,
+        ]);
     }
 }

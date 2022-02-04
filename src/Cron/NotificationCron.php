@@ -16,28 +16,25 @@ namespace Markocupic\SacEventRegistrationReminder\Cron;
 
 use Contao\CoreBundle\Cron\Cron;
 use Contao\CoreBundle\Exception\RedirectResponseException;
-use Contao\CoreBundle\ServiceAnnotation\CronJob;
 use Markocupic\SacEventRegistrationReminder\Controller\EventRegistrationReminderController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * @CronJob("*\/5 * * * *")
+ * Define the configuration in the configuration %sac_evt_reg_reminder.cron_schedule%.
  *
- * We use a real cronjob:
+ * Use a real cronjob:
  * wget -q -O /dev/null 'https://<domain>/_contao/cron' >/dev/null 2>&1.
  */
 class NotificationCron extends AbstractController
 {
     private UrlGeneratorInterface $router;
-    private string $cronSchedule;
     private bool $allowWebScope;
     private string $sid;
 
-    public function __construct(UrlGeneratorInterface $router, string $cronSchedule, bool $allowWebScope, string $sid)
+    public function __construct(UrlGeneratorInterface $router, bool $allowWebScope, string $sid)
     {
         $this->router = $router;
-        $this->cronSchedule = $cronSchedule;
         $this->allowWebScope = $allowWebScope;
         $this->sid = $sid;
     }
@@ -45,10 +42,12 @@ class NotificationCron extends AbstractController
     public function __invoke(string $scope): void
     {
         // Do not execute this cron job in the web scope
+        // if $this->allowWebScope is set to false (configuration)
         if (Cron::SCOPE_WEB === $scope && !$this->allowWebScope) {
             return;
         }
 
+        // Redirect to the controller
         $url = $this->router
             ->generate(
                 EventRegistrationReminderController::class,
@@ -56,7 +55,6 @@ class NotificationCron extends AbstractController
             )
         ;
 
-        // Redirect to the controller
         throw new RedirectResponseException($url);
     }
 }

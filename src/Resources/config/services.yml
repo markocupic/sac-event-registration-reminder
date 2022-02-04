@@ -8,7 +8,7 @@ services:
             $sid: '%sac_evt_reg_reminder.sid%'
             $notificationLimitPerRequest: '%sac_evt_reg_reminder.notification_limit_per_request%'
             $defaultLocale: '%sac_evt_reg_reminder.default_locale%'
-            $cronSchedule: '%sac_evt_reg_reminder.cron_schedule%'
+            #$cronSchedule: '%sac_evt_reg_reminder.cron_schedule%'
 
     Markocupic\SacEventRegistrationReminder\:
         resource: ../../
