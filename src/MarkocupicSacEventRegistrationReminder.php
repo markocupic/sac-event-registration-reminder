@@ -19,9 +19,6 @@ use Markocupic\SacEventRegistrationReminder\DependencyInjection\MarkocupicSacEve
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * Class MarkocupicSacEventRegistrationReminder.
- */
 class MarkocupicSacEventRegistrationReminder extends Bundle
 {
     public function getContainerExtension(): MarkocupicSacEventRegistrationReminderExtension
@@ -38,6 +35,5 @@ class MarkocupicSacEventRegistrationReminder extends Bundle
 
         // Set the cron schedule from configuration
         $container->addCompilerPass(new AddCronSchedulePass());
-
     }
 }

@@ -21,7 +21,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Define the configuration in the configuration %sac_evt_reg_reminder.cron_schedule%.
+ * Define the cron schedule
+ * in the configuration -> %sac_evt_reg_reminder.cron_schedule%.
  *
  * Use a real cronjob:
  * wget -q -O /dev/null 'https://<domain>/_contao/cron' >/dev/null 2>&1.

@@ -21,11 +21,6 @@ use Markocupic\SacEventRegistrationReminder\ContaoManager\Plugin;
 use Markocupic\SacEventRegistrationReminder\MarkocupicSacEventRegistrationReminder;
 use Markocupic\SacEventToolBundle\MarkocupicSacEventToolBundle;
 
-/**
- * Class PluginTest
- *
- * @package Markocupic\SacEventRegistrationReminder\Tests\ContaoManager
- */
 class PluginTest extends ContaoTestCase
 {
     /**

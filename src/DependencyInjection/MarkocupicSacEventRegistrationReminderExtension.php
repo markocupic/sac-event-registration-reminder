@@ -19,9 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-/**
- * Class MarkocupicSacEventRegistrationReminderExtension.
- */
 class MarkocupicSacEventRegistrationReminderExtension extends Extension
 {
     /**
@@ -62,19 +59,13 @@ class MarkocupicSacEventRegistrationReminderExtension extends Extension
         $this->addCronSchedule($container, $config);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @return void
-     */
     private function addCronSchedule(ContainerBuilder $container): void
     {
-        if(!$container->has('Markocupic\SacEventRegistrationReminder\Cron\NotificationCron'))
-        {
+        if (!$container->has('Markocupic\SacEventRegistrationReminder\Cron\NotificationCron')) {
             return;
         }
 
-        if(!$container->hasParameter('sac_evt_reg_reminder.cron_schedule'))
-        {
+        if (!$container->hasParameter('sac_evt_reg_reminder.cron_schedule')) {
             return;
         }
 

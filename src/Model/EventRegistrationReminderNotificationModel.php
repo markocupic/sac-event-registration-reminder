@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /*
  * This file is part of SAC Event Registration Reminder.
- * 
+ *
  * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
@@ -16,14 +16,7 @@ namespace Markocupic\SacEventRegistrationReminder\Model;
 
 use Contao\Model;
 
-/**
- * Class EventRegistrationReminderNotificationModel
- *
- * @package Markocupic\SacEventRegistrationReminder\Model
- */
 class EventRegistrationReminderNotificationModel extends Model
 {
     protected static $strTable = 'tl_event_registration_reminder_notification';
-
 }
-
