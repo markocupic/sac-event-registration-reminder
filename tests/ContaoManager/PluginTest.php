@@ -19,6 +19,7 @@ use Contao\ManagerPlugin\Bundle\Parser\DelegatingParser;
 use Contao\TestCase\ContaoTestCase;
 use Markocupic\SacEventRegistrationReminder\ContaoManager\Plugin;
 use Markocupic\SacEventRegistrationReminder\MarkocupicSacEventRegistrationReminder;
+use Markocupic\SacEventToolBundle\MarkocupicSacEventToolBundle;
 
 /**
  * Class PluginTest
