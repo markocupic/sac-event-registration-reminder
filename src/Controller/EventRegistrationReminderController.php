@@ -137,10 +137,19 @@ class EventRegistrationReminderController extends AbstractController
 
                         if (!empty($arr) && \is_array($arr)) {
                             $userName = $this->connection->fetchOne('SELECT name FROM tl_user WHERE id = ?', [$userId]);
+                            
+                            $addedOn = $this->connection->fetchOne('SELECT addedOn FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?', [$userId, $calendarId]);
+                            if (false === $addedOn || '' === $addedOn) {
+                                $addedOn = time();
+                            } elseif ((time() - (int) $addedOn) > (15 /* days */ * 86400)) {
+                                $addedOn = time();  // resets addedOn time after longer period without any notification sent to user
+                            } else {
+                                // do not update addedOn time to see since when the user has received notifications
+                            }
 
                             $set = [
                                 'tstamp' => time(),
-                                'addedOn' => time(),
+                                'addedOn' => $addedOn,
                                 'title' => 'Sent a reminder to '.$userName.'.',
                                 'user' => $userId,
                                 'calendar' => $calendarId,
