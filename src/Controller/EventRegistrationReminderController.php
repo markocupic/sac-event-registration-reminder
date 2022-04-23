@@ -150,7 +150,7 @@ class EventRegistrationReminderController extends AbstractController
                             $set = [
                                 'tstamp' => time(),
                                 'addedOn' => $addedOn,
-                                'title' => 'Sent a reminder to '.$userName.'.',
+                                'title' => 'Sent a reminder to '.$userName.' (since '.date("d.m.Y", $addedOn).').',
                                 'user' => $userId,
                                 'calendar' => $calendarId,
                             ];
