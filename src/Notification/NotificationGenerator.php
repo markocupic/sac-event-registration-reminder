@@ -98,7 +98,7 @@ class NotificationGenerator
                         continue;
                     }
 
-                    $elapsedSeconds = time() - (int) $registration->addedOn + 120 /* approx. processing time of all events [s] */;
+                    $elapsedSeconds = time() - (int) $registration->tstamp + 120 /* approx. processing time of all events [s] */;
                     if ($elapsedSeconds < 0) {
                         $elapsedSeconds = 0;
                     }
