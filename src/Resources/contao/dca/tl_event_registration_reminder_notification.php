@@ -29,7 +29,7 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
             'fields' => ['title'],
             'flag' => 1,
             'panelLayout' => 'filter;sort,search,limit',
-            'fields' => ['addedOn DESC'],
+            'fields' => ['tstamp DESC'],
         ],
         'label' => [
             'fields' => ['title'],
