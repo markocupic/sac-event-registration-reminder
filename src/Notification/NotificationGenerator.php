@@ -71,6 +71,7 @@ class NotificationGenerator
     private function prepareTwigData(): array
     {
         $arrData = [];
+        $currentTime = time() + 60 /* for rounding issues [s] */;  // Use predictive time of processing start
 
         $calendarEventsModelAdapter = $this->framework->getAdapter(CalendarEventsModel::class);
 
@@ -98,7 +99,7 @@ class NotificationGenerator
                         continue;
                     }
 
-                    $elapsedSeconds = time() - (int) $registration->addedOn + 120 /* approx. processing time of all events [s] */;
+                    $elapsedSeconds = $currentTime - (int) $registration->addedOn;
                     if ($elapsedSeconds < 0) {
                         $elapsedSeconds = 0;
                     }
