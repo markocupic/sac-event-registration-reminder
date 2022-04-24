@@ -3,20 +3,19 @@
 declare(strict_types=1);
 
 /*
- * This file is part of Contao Calculator Form.
+ * This file is part of SAC Event Registration Reminder.
  *
  * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
- * @license GPL-3.0-or-later
+ * @license MIT
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
- * @link https://github.com/markocupic/contao-calculator-form
+ * @link https://github.com/markocupic/sac-event-registration-reminder
  */
 
 namespace Markocupic\SacEventRegistrationReminder\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @internal
@@ -29,8 +28,7 @@ class AddCronSchedulePass implements CompilerPassInterface
             return;
         }
 
-        if(!$container->hasParameter('sac_evt_reg_reminder.cron_schedule'))
-        {
+        if (!$container->hasParameter('sac_evt_reg_reminder.cron_schedule')) {
             return;
         }
 
@@ -40,11 +38,10 @@ class AddCronSchedulePass implements CompilerPassInterface
 
         $cron->clearTag('contao.cronjob');
 
-        $cron->addTag('contao.cronjob',[
+        $cron->addTag('contao.cronjob', [
             'interval' => $cronSchedule,
         ]);
 
         //die(print_r($cron->getTags(),true));
-
     }
 }

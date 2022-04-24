@@ -18,6 +18,7 @@ use Contao\CalendarEventsMemberModel;
 use Contao\CalendarEventsModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\UserModel;
+use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
 use Markocupic\SacEventRegistrationReminder\String\Sanitizer;
 use Safe\Exceptions\StringsException;
 use function Safe\sprintf;
@@ -33,15 +34,17 @@ class NotificationGenerator
     private Environment $twig;
     private TranslatorInterface $translator;
     private Sanitizer $sanitizer;
+    private Stopwatch $stopwatch;
     private ?array $data;
     private ?UserModel $user;
 
-    public function __construct(ContaoFramework $framework, Environment $twig, TranslatorInterface $translator, Sanitizer $sanitizer)
+    public function __construct(ContaoFramework $framework, Environment $twig, TranslatorInterface $translator, Sanitizer $sanitizer, Stopwatch $stopwatch)
     {
         $this->framework = $framework;
         $this->twig = $twig;
         $this->translator = $translator;
         $this->sanitizer = $sanitizer;
+        $this->stopwatch = $stopwatch;
     }
 
     /**
@@ -71,7 +74,9 @@ class NotificationGenerator
     private function prepareTwigData(): array
     {
         $arrData = [];
-        $currentTime = time() + 60 /* for rounding issues [s] */;  // Use predictive time of processing start
+
+        // Use predictive time of processing start (+ 60s for rounding issues)
+        $currentTime = $this->stopwatch->getRequestTime() + 60;
 
         $calendarEventsModelAdapter = $this->framework->getAdapter(CalendarEventsModel::class);
 
@@ -100,9 +105,11 @@ class NotificationGenerator
                     }
 
                     $elapsedSeconds = $currentTime - (int) $registration->addedOn;
+
                     if ($elapsedSeconds < 0) {
                         $elapsedSeconds = 0;
                     }
+
                     $daysRegistered = floor($elapsedSeconds / 86400);
 
                     $rowEvent['registrations_'.$deadlineKey][] = [
@@ -111,7 +118,7 @@ class NotificationGenerator
                         'trans' => [
                             'days_registered' => $this->translator->trans('MSC.serr_days_registered', [$daysRegistered], 'contao_default'),
                             'participant' => 'female' === $registration->gender ? $this->translator->trans('MSC.serr_participant_female', [], 'contao_default') : $this->translator->trans('MSC.serr_participant_male', [], 'contao_default'),
-                            'sac_member_id' => $this->translator->trans('MSC.serr_sac_member_id', [(int)$registration->sacMemberId], 'contao_default'),
+                            'sac_member_id' => $this->translator->trans('MSC.serr_sac_member_id', [(int) $registration->sacMemberId], 'contao_default'),
                         ],
                     ];
                 }

@@ -41,7 +41,7 @@ class NotificationHelper
      *
      * @return array
      */
-    public function send(Notification $notification, int $userId, int $calendarId,  array $arrTokens, string $defaultLocale)
+    public function send(Notification $notification, int $userId, int $calendarId, array $arrTokens, string $defaultLocale)
     {
         $this->initialize($notification, $userId, $calendarId, $arrTokens);
 

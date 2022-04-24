@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Markocupic\SacEventRegistrationReminder\DataContainer;
 
-use Doctrine\DBAL\Connection;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
+use Doctrine\DBAL\Connection;
 
 class EventRegistrationReminderNotification
 {

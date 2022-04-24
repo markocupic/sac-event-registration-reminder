@@ -16,14 +16,17 @@ namespace Markocupic\SacEventRegistrationReminder\Data;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
 
 class DataCollector
 {
     private Connection $connection;
+    private Stopwatch $stopwatch;
 
-    public function __construct(Connection $connection)
+    public function __construct(Connection $connection, Stopwatch $stopwatch)
     {
         $this->connection = $connection;
+        $this->stopwatch = $stopwatch;
     }
 
     /**
@@ -32,7 +35,7 @@ class DataCollector
     public function getData(string $state): array
     {
         $arrData = [];
-        $currentTime = time();  // Use predictive time of processing start
+        $currentTime = $this->stopwatch->getRequestTime(); // Use predictive time of processing start
 
         $arrCalendars = array_map(static fn ($id) => (int) $id, $this->getCalendars());
 
@@ -56,12 +59,11 @@ class DataCollector
             $sendEach = (int) $sendEachD * 24 * 3600;
 
             foreach ($arrUsers as $userId) {
-
                 $blnSend = false;
 
                 $arrData[$calendarId][$userId] = [];
 
-                $arrEvents = array_map(static fn ($id) => (int) $id, $this->getEventsByUserAndCalendar($userId, $calendarId, $sendEach, $currentTime));
+                $arrEvents = array_map(static fn ($id) => (int) $id, $this->getEventsByUserAndCalendar($userId, $calendarId, $sendEach));
 
                 foreach ($arrEvents as $eventId) {
                     $registrationsOutsideDeadline = $this->getRegistrationsByEventAndState($eventId, $state, $timeLimit);
@@ -113,13 +115,17 @@ class DataCollector
     /**
      * @throws Exception
      */
-    private function getEventsByUserAndCalendar(int $userId, int $calendarId, int $sendEachTstamp, int $currentTime): array
+    private function getEventsByUserAndCalendar(int $userId, int $calendarId, int $sendEachTstamp): array
     {
-        $limit = $currentTime - $sendEachTstamp + 60 /* for rounding issues and start tolerance of periodic execution [s] */;
+        // Use predictive time of processing start
+        $currentTime = $this->stopwatch->getRequestTime();
 
-        // Do not send reminders if user is still within the sendReminderEach time limit
+        // + 60 s for rounding issues and start tolerance of periodic execution [s]
+        $limit = $currentTime - $sendEachTstamp + 60;
+
+        // Do not send reminders if the user is still within the sendReminderEach time limit
         $result = $this->connection->fetchOne(
-            'SELECT user FROM tl_event_registration_reminder_notification WHERE tstamp > ? AND user = ? AND calendar = ?',
+            'SELECT user FROM tl_event_registration_reminder_notification WHERE addedOn > ? AND user = ? AND calendar = ?',
             [$limit, $userId, $calendarId],
         );
 
@@ -131,7 +137,7 @@ class DataCollector
         $arr1 = $this->connection->fetchFirstColumn(
             'SELECT id FROM tl_calendar_events AS t1 WHERE '.
             't1.pid = ? AND t1.published = ? AND t1.registrationGoesTo = ? AND t1.startDate > ?',
-            [$calendarId, '1', $userId, time()]
+            [$calendarId, '1', $userId, $currentTime]
         );
 
         // If the main instructor is the recipient of event registration notifications.
@@ -139,7 +145,7 @@ class DataCollector
             'SELECT id FROM tl_calendar_events AS t1 WHERE '.
             't1.pid = ? AND t1.startDate > ? AND t1.published = ? AND NOT t1.registrationGoesTo > ? AND '.
             't1.id IN (SELECT t2.pid FROM tl_calendar_events_instructor AS t2 WHERE t2.isMainInstructor = ? AND t2.userId = ?)',
-            [$calendarId, time(), '1', 0, '1', $userId]
+            [$calendarId, $currentTime, '1', 0, '1', $userId]
         );
 
         return array_unique(array_merge($arr1, $arr2));

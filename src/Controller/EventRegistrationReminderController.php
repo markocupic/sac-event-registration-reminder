@@ -22,6 +22,7 @@ use Markocupic\SacEventRegistrationReminder\Data\Data;
 use Markocupic\SacEventRegistrationReminder\Data\DataCollector;
 use Markocupic\SacEventRegistrationReminder\Notification\NotificationGenerator;
 use Markocupic\SacEventRegistrationReminder\Notification\NotificationHelper;
+use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
 use Markocupic\SacEventToolBundle\Config\EventSubscriptionLevel;
 use NotificationCenter\Model\Notification;
 use Psr\Log\LoggerInterface;
@@ -40,19 +41,21 @@ class EventRegistrationReminderController extends AbstractController
     private DataCollector $dataCollector;
     private NotificationGenerator $messageGenerator;
     private NotificationHelper $notificationHelper;
+    private Stopwatch $stopwatch;
     private bool $disable;
     private string $sid;
     private int $notificationLimitPerRequest;
     private string $defaultLocale;
     private ?LoggerInterface $logger;
 
-    public function __construct(ContaoFramework $framework, Connection $connection, DataCollector $dataCollector, NotificationGenerator $messageGenerator, NotificationHelper $notificationHelper, bool $disable, string $sid, int $notificationLimitPerRequest, string $defaultLocale, ?LoggerInterface $logger)
+    public function __construct(ContaoFramework $framework, Connection $connection, DataCollector $dataCollector, NotificationGenerator $messageGenerator, NotificationHelper $notificationHelper, Stopwatch $stopwatch, bool $disable, string $sid, int $notificationLimitPerRequest, string $defaultLocale, ?LoggerInterface $logger)
     {
         $this->framework = $framework;
         $this->connection = $connection;
         $this->dataCollector = $dataCollector;
         $this->messageGenerator = $messageGenerator;
         $this->notificationHelper = $notificationHelper;
+        $this->stopwatch = $stopwatch;
         $this->disable = $disable;
         $this->sid = $sid;
         $this->notificationLimitPerRequest = $notificationLimitPerRequest;
@@ -61,8 +64,6 @@ class EventRegistrationReminderController extends AbstractController
     }
 
     /**
-     * @param string $sid
-     * @return Response
      * @throws Exception
      * @throws StringsException
      */
@@ -86,8 +87,6 @@ class EventRegistrationReminderController extends AbstractController
         }
 
         $this->framework->initialize();
-
-        $startTime = time();
 
         $state = EventSubscriptionLevel::SUBSCRIPTION_NOT_CONFIRMED;
 
@@ -137,25 +136,22 @@ class EventRegistrationReminderController extends AbstractController
 
                         if (!empty($arr) && \is_array($arr)) {
                             $userName = $this->connection->fetchOne('SELECT name FROM tl_user WHERE id = ?', [$userId]);
-                            
-                            $addedOn = $this->connection->fetchOne('SELECT addedOn FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?', [$userId, $calendarId]);
-                            if (false === $addedOn || '' === $addedOn || 0 == $addedOn) {
-                                $addedOn = $startTime;
-                            } elseif ((time() - (int) $addedOn) > (15 /* days */ * 86400)) {
-                                $addedOn = $startTime;  // resets addedOn time after longer period without any notification sent to user
-                            } else {
-                                // do not update addedOn time to see since when the user has received notifications
-                            }
+
+                            // Get the previous reminder added-on timestamp, if there is one
+                            $prevReminderTstamp = $this->connection->fetchOne('SELECT addedOn FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?', [$userId, $calendarId]);
+
+                            $prevReminderTstamp = !empty($prevReminderTstamp) ? (int) $prevReminderTstamp : 0;
 
                             $set = [
-                                'tstamp' => $startTime,
-                                'addedOn' => $addedOn,
-                                'title' => 'Sent a reminder to '.$userName.' (since '.date("d.m.Y", $addedOn).').',
+                                'tstamp' => $this->stopwatch->getRequestTime(),
+                                'addedOn' => $this->stopwatch->getRequestTime(),
+                                'prevReminderTstamp' => !empty($prevReminderTstamp) ? $prevReminderTstamp : 0,
+                                'title' => 'Sent a reminder to '.$userName.($prevReminderTstamp ? ' (since '.date('d.m.Y', $prevReminderTstamp).').' : '.'),
                                 'user' => $userId,
                                 'calendar' => $calendarId,
                             ];
 
-                            // We create a new record that prevents
+                            // Create a new record that prevents
                             // the user from being notified again
                             // before the expiry of the "remindEach" limit
                             $affectedRows = $this->connection->insert('tl_event_registration_reminder_notification', $set);
@@ -164,7 +160,7 @@ class EventRegistrationReminderController extends AbstractController
                                 $lastInsertId = $this->connection->lastInsertId();
 
                                 // Delete old records
-                                $this->connection->executeQuery(
+                                $this->connection->executeStatement(
                                     'DELETE FROM tl_event_registration_reminder_notification WHERE id != ? AND user = ? AND calendar = ?',
                                     [$lastInsertId, $userId, $calendarId],
                                 );
@@ -180,7 +176,7 @@ class EventRegistrationReminderController extends AbstractController
         }
 
         // Log and send a response
-        $responseMsg = sprintf('Traversed %s users and sent %s notifications. Script runtime: %s s.', $userCount, $emailCount, time() - $startTime);
+        $responseMsg = sprintf('SAC event registration reminder: Processed %d users and sent %d notifications. Script runtime: %d s.', $userCount, $emailCount, $this->stopwatch->getDuration());
 
         $this->log($responseMsg);
 

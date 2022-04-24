@@ -17,15 +17,13 @@ namespace Markocupic\SacEventRegistrationReminder\String;
 class Sanitizer
 {
     /**
-     * Trim & decode strings
+     * Trim & decode strings.
      */
     public function sanitize(string $strString): string
     {
-
         $strString = trim($strString);
         $strString = html_entity_decode($strString, ENT_QUOTES);
-        $strString = preg_replace('/&(amp;)?/i', '&', $strString);
 
-        return $strString;
+        return preg_replace('/&(amp;)?/i', '&', $strString);
     }
 }

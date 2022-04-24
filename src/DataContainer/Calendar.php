@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Markocupic\SacEventRegistrationReminder\DataContainer;
 
-use Doctrine\DBAL\Connection;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
+use Doctrine\DBAL\Connection;
 
 class Calendar
 {
@@ -35,13 +35,10 @@ class Calendar
 
         $stmt = $this->connection->executeQuery('SELECT * FROM tl_nc_notification', []);
 
-        while (false !== ($row = $stmt->fetchAssociative()))
-        {
+        while (false !== ($row = $stmt->fetchAssociative())) {
             $arrOptions[$row['id']] = $row['title'];
         }
 
         return $arrOptions;
     }
 }
-
-

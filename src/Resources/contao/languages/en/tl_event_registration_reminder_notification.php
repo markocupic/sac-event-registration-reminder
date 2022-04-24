@@ -24,3 +24,4 @@ $GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['title'] = ['
 $GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['calendar'] = ['Calendar', 'Select a calendar.'];
 $GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['user'] = ['User', 'Select a user.'];
 $GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['addedOn'] = ['Added On', 'Add the "insert record" time.'];
+$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['prevReminderTstamp'] = ['Previous reminder', 'Add the date and time of the previous reminder.'];

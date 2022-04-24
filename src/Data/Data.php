@@ -14,12 +14,8 @@ declare(strict_types=1);
 
 namespace Markocupic\SacEventRegistrationReminder\Data;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
-
 class Data
 {
-
     private array $data;
 
     public function __construct(array $data)

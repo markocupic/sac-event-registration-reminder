@@ -12,103 +12,113 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/sac-event-registration-reminder
  */
 
+use Contao\DataContainer;
+
 $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
-    'config' => [
+    'config'   => [
         'dataContainer' => 'Table',
-        'closed' => true,
-        'sql' => [
+        'closed'        => true,
+        'sql'           => [
             'keys' => [
-                'id' => 'primary',
-                'addedOn,user,calendar' => 'index'
+                'id'                    => 'primary',
+                'addedOn,user,calendar' => 'index',
             ],
         ],
     ],
-    'list' => [
-        'sorting' => [
-            'mode' => 1,
-            'fields' => ['title'],
-            'flag' => 1,
+    'list'     => [
+        'sorting'           => [
+            'mode'        => DataContainer::MODE_SORTABLE,
             'panelLayout' => 'filter;sort,search,limit',
-            'fields' => ['tstamp DESC'],
+            'fields'      => ['addedOn DESC'],
         ],
-        'label' => [
+        'label'             => [
             'fields' => ['title'],
             'format' => '%s',
         ],
         'global_operations' => [
             'all' => [
-                'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
-                'href' => 'act=select',
-                'class' => 'header_edit_all',
+                'label'      => &$GLOBALS['TL_LANG']['MSC']['all'],
+                'href'       => 'act=select',
+                'class'      => 'header_edit_all',
                 'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
             ],
         ],
-        'operations' => [
-            'edit' => [
+        'operations'        => [
+            'edit'   => [
                 'label' => &$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['edit'],
-                'href' => 'act=edit',
-                'icon' => 'edit.svg',
+                'href'  => 'act=edit',
+                'icon'  => 'edit.svg',
             ],
-            'copy' => [
+            'copy'   => [
                 'label' => &$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['copy'],
-                'href' => 'act=copy',
-                'icon' => 'copy.svg',
+                'href'  => 'act=copy',
+                'icon'  => 'copy.svg',
             ],
             'delete' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['delete'],
-                'href' => 'act=delete',
-                'icon' => 'delete.svg',
+                'label'      => &$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['delete'],
+                'href'       => 'act=delete',
+                'icon'       => 'delete.svg',
                 'attributes' => 'onclick="if(!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'\'))return false;Backend.getScrollOffset()"',
             ],
-            'show' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['show'],
-                'href' => 'act=show',
-                'icon' => 'show.svg',
+            'show'   => [
+                'label'      => &$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['show'],
+                'href'       => 'act=show',
+                'icon'       => 'show.svg',
                 'attributes' => 'style="margin-right:3px"',
             ],
         ],
     ],
     'palettes' => [
-        'default' => '{first_legend},title,user,calendar,addedOn',
+        'default' => '{first_legend},title,user,calendar,addedOn,prevReminderTstamp',
     ],
-    'fields' => [
-        'id' => [
+    'fields'   => [
+        'id'                 => [
             'sql' => 'int(10) unsigned NOT NULL auto_increment',
         ],
-        'tstamp' => [
-            'sql' => "int(10) unsigned NOT NULL default '0'",
-        ],
-        'title' => [
-            'inputType' => 'text',
-            'exclude' => true,
-            'search' => true,
+        'tstamp'             => [
+            'flag'    => DataContainer::SORT_DAY_DESC,
             'sorting' => true,
-            'eval' => ['rgxp' => 'alnum', 'tl_class' => 'w50'],
-            'sql' => "varchar(255) NOT NULL default ''",
+            'sql'     => "int(10) unsigned NOT NULL default '0'",
         ],
-        'addedOn' => [
+        'title'              => [
+            'eval'      => ['rgxp' => 'alnum', 'tl_class' => 'w50'],
+            'exclude'   => true,
             'inputType' => 'text',
-            'flag' => 5,
-            'eval' => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
-            'sql' => "int(10) unsigned NOT NULL default '0'",
+            'search'    => true,
+            'sorting'   => true,
+            'sql'       => "varchar(255) NOT NULL default ''",
         ],
-        'user' => [
+        'addedOn'            => [
+            'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+            'flag'      => DataContainer::SORT_DAY_DESC,
             'inputType' => 'text',
-            'exclude' => true,
-            'filter' => true,
+            'sorting'   => true,
+            'sql'       => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'prevReminderTstamp' => [
+            'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+            'flag'      => DataContainer::SORT_DAY_DESC,
+            'inputType' => 'text',
+            'sorting'   => true,
+            'sql'       => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'user'               => [
+            'eval'       => ['tl_class' => 'w50'],
+            'exclude'    => true,
+            'filter'     => true,
             'foreignKey' => 'tl_user.name',
-            'eval' => ['tl_class' => 'w50'],
-            'sql' => 'int(10) unsigned NOT NULL default 0',
-            'relation' => ['type' => 'belongsTo', 'load' => 'lazy'],
+            'inputType'  => 'text',
+            'relation'   => ['type' => 'belongsTo', 'load' => 'lazy'],
+            'sql'        => 'int(10) unsigned NOT NULL default 0',
         ],
-        'calendar' => [
-            'inputType' => 'select',
-            'exclude' => true,
-            'filter' => true,
+        'calendar'           => [
+            'eval'       => ['tl_class' => 'w50'],
+            'exclude'    => true,
+            'filter'     => true,
             'foreignKey' => 'tl_calendar.title',
-            'eval' => ['tl_class' => 'w50'],
-            'sql' => "varchar(255) NOT NULL default ''",
-            'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
+            'inputType'  => 'select',
+            'relation'   => ['type' => 'hasOne', 'load' => 'lazy'],
+            'sql'        => "varchar(255) NOT NULL default ''",
         ],
     ],
 ];
