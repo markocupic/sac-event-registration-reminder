@@ -32,6 +32,7 @@ class DataCollector
     public function getData(string $state): array
     {
         $arrData = [];
+        $currentTime = time();  // Use predictive time of processing start
 
         $arrCalendars = array_map(static fn ($id) => (int) $id, $this->getCalendars());
 
@@ -51,7 +52,7 @@ class DataCollector
                 continue;
             }
 
-            $timeLimit = time() - (int) $timeLimitD * 24 * 3600;
+            $timeLimit = $currentTime - (int) $timeLimitD * 24 * 3600;
             $sendEach = (int) $sendEachD * 24 * 3600;
 
             foreach ($arrUsers as $userId) {
@@ -60,11 +61,11 @@ class DataCollector
 
                 $arrData[$calendarId][$userId] = [];
 
-                $arrEvents = array_map(static fn ($id) => (int) $id, $this->getEventsByUserAndCalendar($userId, $calendarId, $sendEach));
+                $arrEvents = array_map(static fn ($id) => (int) $id, $this->getEventsByUserAndCalendar($userId, $calendarId, $sendEach, $currentTime));
 
                 foreach ($arrEvents as $eventId) {
                     $registrationsOutsideDeadline = $this->getRegistrationsByEventAndState($eventId, $state, $timeLimit);
-                    $registrationsTotal = $this->getRegistrationsByEventAndState($eventId, $state, time());
+                    $registrationsTotal = $this->getRegistrationsByEventAndState($eventId, $state, $currentTime);
                     $registrationsWithinDeadline = array_diff($registrationsTotal, $registrationsOutsideDeadline);
 
                     if (!empty($registrationsOutsideDeadline)) {
@@ -112,13 +113,13 @@ class DataCollector
     /**
      * @throws Exception
      */
-    private function getEventsByUserAndCalendar(int $userId, int $calendarId, int $sendEachTstamp): array
+    private function getEventsByUserAndCalendar(int $userId, int $calendarId, int $sendEachTstamp, int $currentTime): array
     {
-        $limit = time() - $sendEachTstamp;
+        $limit = $currentTime - $sendEachTstamp + 60 /* for rounding issues and start tolerance of periodic execution [s] */;
 
         // Do not send reminders if user is still within the sendReminderEach time limit
         $result = $this->connection->fetchOne(
-            'SELECT user FROM tl_event_registration_reminder_notification WHERE addedOn > ? AND user = ? AND calendar = ?',
+            'SELECT user FROM tl_event_registration_reminder_notification WHERE tstamp > ? AND user = ? AND calendar = ?',
             [$limit, $userId, $calendarId],
         );
 
