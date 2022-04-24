@@ -87,7 +87,7 @@ class EventRegistrationReminderController extends AbstractController
 
         $this->framework->initialize();
 
-        $start = time();
+        $startTime = time();
 
         $state = EventSubscriptionLevel::SUBSCRIPTION_NOT_CONFIRMED;
 
@@ -140,15 +140,15 @@ class EventRegistrationReminderController extends AbstractController
                             
                             $addedOn = $this->connection->fetchOne('SELECT addedOn FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?', [$userId, $calendarId]);
                             if (false === $addedOn || '' === $addedOn || 0 == $addedOn) {
-                                $addedOn = time();
+                                $addedOn = $startTime;
                             } elseif ((time() - (int) $addedOn) > (15 /* days */ * 86400)) {
-                                $addedOn = time();  // resets addedOn time after longer period without any notification sent to user
+                                $addedOn = $startTime;  // resets addedOn time after longer period without any notification sent to user
                             } else {
                                 // do not update addedOn time to see since when the user has received notifications
                             }
 
                             $set = [
-                                'tstamp' => time(),
+                                'tstamp' => $startTime,
                                 'addedOn' => $addedOn,
                                 'title' => 'Sent a reminder to '.$userName.' (since '.date("d.m.Y", $addedOn).').',
                                 'user' => $userId,
@@ -180,7 +180,7 @@ class EventRegistrationReminderController extends AbstractController
         }
 
         // Log and send a response
-        $responseMsg = sprintf('Traversed %s users and sent %s notifications. Script runtime: %s s.', $userCount, $emailCount, time() - $start);
+        $responseMsg = sprintf('Traversed %s users and sent %s notifications. Script runtime: %s s.', $userCount, $emailCount, time() - $startTime);
 
         $this->log($responseMsg);
 
