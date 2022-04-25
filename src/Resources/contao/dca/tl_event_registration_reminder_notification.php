@@ -69,7 +69,7 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
         ],
     ],
     'palettes' => [
-        'default' => '{first_legend},title,user,calendar,addedOn,prevReminderTstamp',
+        'default' => '{first_legend},title,user,calendar,addedOn,prevReminderTstamp,history',
     ],
     'fields'   => [
         'id'                 => [
@@ -119,6 +119,12 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
             'inputType'  => 'select',
             'relation'   => ['type' => 'hasOne', 'load' => 'lazy'],
             'sql'        => "varchar(255) NOT NULL default ''",
+        ],
+        'history'            => [
+            'exclude'   => true,
+            'inputType' => 'textarea',
+            'eval'      => ['style' => 'height:60px', 'decodeEntities' => true, 'tl_class' => 'w50'],
+            'sql'       => 'text NULL',
         ],
     ],
 ];

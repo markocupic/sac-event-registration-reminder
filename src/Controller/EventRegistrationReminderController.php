@@ -158,6 +158,18 @@ class EventRegistrationReminderController extends AbstractController
                             $strSuffix = $blnAddSuffix ? sprintf(' (last time %s)', date('d.m.Y', $prevReminderTstamp)) : '';
                             $strTitle = sprintf('Sent a reminder to %s%s.', $userName, $strSuffix);
 
+                            // Get the previous reminder added-on timestamp, if there is one
+                            $strHistory = (string) $this->connection->fetchOne(
+                                'SELECT history FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?',
+                                [$userId, $calendarId]
+                            );
+
+                            // Append reminder date to the history
+                            $arrHistory = explode("\n", $strHistory);
+                            array_unshift($arrHistory, sprintf('Sent a reminder to %s on %s;', $userName, date('d.m.Y H:i:s', $this->stopwatch->getRequestTime())));
+                            $arrHistory = \count($arrHistory) > 10 ? \array_slice($arrHistory, 0, 10) : $arrHistory;
+                            $strHistory = implode("\n", $arrHistory);
+
                             $set = [
                                 'tstamp' => $this->stopwatch->getRequestTime(),
                                 'addedOn' => $this->stopwatch->getRequestTime(),
@@ -165,6 +177,7 @@ class EventRegistrationReminderController extends AbstractController
                                 'title' => $strTitle,
                                 'user' => $userId,
                                 'calendar' => $calendarId,
+                                'history' => $strHistory,
                             ];
 
                             // Create a new record that prevents

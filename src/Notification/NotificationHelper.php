@@ -72,7 +72,7 @@ class NotificationHelper
 
     private function prepareTokens(): void
     {
-        $this->tokens['admin_email'] = $GLOBALS['TL_ADMIN_EMAIL'];
+        $this->tokens['admin_email'] = $GLOBALS['TL_ADMIN_EMAIL'] ?? '';
         $this->tokens['instructor_email'] = $this->user->email;
         $this->tokens['instructor_firstname'] = $this->user->firstname;
         $this->tokens['instructor_lastname'] = $this->user->lastname;
