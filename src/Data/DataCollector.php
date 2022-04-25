@@ -45,25 +45,25 @@ class DataCollector
             $arrData[$calendarId] = [];
 
             $timeLimitD = $this->connection->fetchOne('SELECT sendFirstReminderAfter FROM tl_calendar WHERE id = ?', [$calendarId]);
-            $sendEachD = $this->connection->fetchOne('SELECT sendReminderEach FROM tl_calendar WHERE id = ?', [$calendarId]);
+            $reminderIntervalD = $this->connection->fetchOne('SELECT sendReminderEach FROM tl_calendar WHERE id = ?', [$calendarId]);
 
             if (!$timeLimitD) {
                 continue;
             }
 
-            if (!$sendEachD) {
+            if (!$reminderIntervalD) {
                 continue;
             }
 
             $timeLimit = $currentTime - (int) $timeLimitD * 24 * 3600;
-            $sendEach = (int) $sendEachD * 24 * 3600;
+            $reminderIntervalS = (int) $reminderIntervalD * 24 * 3600;
 
             foreach ($arrUsers as $userId) {
                 $blnSend = false;
 
                 $arrData[$calendarId][$userId] = [];
 
-                $arrEvents = array_map(static fn ($id) => (int) $id, $this->getEventsByUserAndCalendar($userId, $calendarId, $sendEach));
+                $arrEvents = array_map(static fn ($id) => (int) $id, $this->getEventsByUserAndCalendar($userId, $calendarId, $reminderIntervalS));
 
                 foreach ($arrEvents as $eventId) {
                     $registrationsOutsideDeadline = $this->getRegistrationsByEventAndState($eventId, $state, $timeLimit);
@@ -115,13 +115,13 @@ class DataCollector
     /**
      * @throws Exception
      */
-    private function getEventsByUserAndCalendar(int $userId, int $calendarId, int $sendEachTstamp): array
+    private function getEventsByUserAndCalendar(int $userId, int $calendarId, int $reminderIntervalS): array
     {
         // Use predictive time of processing start
         $currentTime = $this->stopwatch->getRequestTime();
 
         // + 60 s for rounding issues and start tolerance of periodic execution [s]
-        $limit = $currentTime - $sendEachTstamp + 60;
+        $limit = $currentTime - $reminderIntervalS + 60;
 
         // Do not send reminders if the user is still within the sendReminderEach time limit
         $result = $this->connection->fetchOne(
