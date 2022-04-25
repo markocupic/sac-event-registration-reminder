@@ -81,7 +81,7 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
             'sql'     => "int(10) unsigned NOT NULL default '0'",
         ],
         'title'              => [
-            'eval'      => ['rgxp' => 'alnum', 'tl_class' => 'w50'],
+            'eval'      => ['tl_class' => 'w50'],
             'exclude'   => true,
             'inputType' => 'text',
             'search'    => true,
