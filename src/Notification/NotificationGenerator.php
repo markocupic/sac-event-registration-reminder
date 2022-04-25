@@ -48,7 +48,10 @@ class NotificationGenerator
     }
 
     /**
-     * @throws \Exception
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws StringsException
+     * @throws SyntaxError
      */
     public function generate(array $arrData, int $userId): string
     {
@@ -59,6 +62,7 @@ class NotificationGenerator
 
     /**
      * @throws StringsException
+     * @throws \Exception
      */
     private function initialize(array $arrData, int $userId): void
     {
