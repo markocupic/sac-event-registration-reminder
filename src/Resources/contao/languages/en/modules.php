@@ -15,4 +15,4 @@ declare(strict_types=1);
 /*
  * Backend modules
  */
-$GLOBALS['TL_LANG']['MOD']['event_registration_reminder_notification'] = ['Instr. notif. for not process. event reg', 'Administer event instructor notifications for not prcessed event registrations.'];
+$GLOBALS['TL_LANG']['MOD']['event_registration_reminder_notification'] = ['Event notif. reminder', 'Administer event instructor notifications for not prcessed event registrations.'];

@@ -175,7 +175,7 @@ class EventRegistrationReminderController extends AbstractController
 
                             $set = [
                                 'tstamp' => $this->stopwatch->getRequestTime(),
-                                'addedOn' => $this->stopwatch->getRequestTime(),
+                                'addedOn' => $hasRecord ? (int) $arrReminder['addedOn'] : $this->stopwatch->getRequestTime(),
                                 'prevReminderTstamp' => $prevReminderTstamp,
                                 'title' => $strTitle,
                                 'user' => $userId,
