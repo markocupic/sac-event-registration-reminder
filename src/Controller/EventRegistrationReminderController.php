@@ -148,10 +148,15 @@ class EventRegistrationReminderController extends AbstractController
                             $userName = $this->connection->fetchOne('SELECT name FROM tl_user WHERE id = ?', [$userId]);
 
                             // Get the previous reminder added-on timestamp, if there is one
-                            $prevReminderTstamp = (int) $this->connection->fetchOne(
-                                'SELECT addedOn FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?',
+                            $arrReminder = $this->connection->fetchAssociative(
+                                'SELECT * FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?',
                                 [$userId, $calendarId]
                             );
+
+                            $hasRecord = \is_array($arrReminder);
+
+                            // Get the previous reminder added-on timestamp, if there is one
+                            $prevReminderTstamp = $hasRecord ? (int) $arrReminder['addedOn'] : 0;
 
                             // Add a suffix to the title to point out lazy instructors/tour guides ;-)
                             $blnAddSuffix = $prevReminderTstamp && ($prevReminderTstamp + 2 * $reminderIntervalD * 86400) > $this->stopwatch->getRequestTime();
@@ -159,16 +164,14 @@ class EventRegistrationReminderController extends AbstractController
                             $strTitle = sprintf('Sent a reminder to %s%s.', $userName, $strSuffix);
 
                             // Get the previous reminder added-on timestamp, if there is one
-                            $strHistory = (string) $this->connection->fetchOne(
-                                'SELECT history FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?',
-                                [$userId, $calendarId]
-                            );
+                            // and append it to the history
+                            $arrHistory = $hasRecord ? explode("\n", $arrReminder['history']) : [];
 
-                            // Append reminder date to the history
-                            $arrHistory = explode("\n", $strHistory);
+                            // Add the latest record to the top
                             array_unshift($arrHistory, sprintf('Sent a reminder to %s on %s;', $userName, date('d.m.Y H:i:s', $this->stopwatch->getRequestTime())));
-                            $arrHistory = \count($arrHistory) > 10 ? \array_slice($arrHistory, 0, 10) : $arrHistory;
-                            $strHistory = implode("\n", $arrHistory);
+
+                            // The history contains the latest 10 records only
+                            $arrHistory = \array_slice($arrHistory, 0, 10);
 
                             $set = [
                                 'tstamp' => $this->stopwatch->getRequestTime(),
@@ -177,21 +180,22 @@ class EventRegistrationReminderController extends AbstractController
                                 'title' => $strTitle,
                                 'user' => $userId,
                                 'calendar' => $calendarId,
-                                'history' => $strHistory,
+                                'history' => implode("\n", $arrHistory),
                             ];
 
-                            // Create a new record that prevents
+                            // Insert or update the record will prevent
                             // the user from being notified again
                             // before the expiry of the "remindEach" limit
-                            $affectedRows = $this->connection->insert('tl_event_registration_reminder_notification', $set);
-
-                            if ($affectedRows) {
-                                $lastInsertId = $this->connection->lastInsertId();
-
-                                // Delete the old record
-                                $this->connection->executeStatement(
-                                    'DELETE FROM tl_event_registration_reminder_notification WHERE id != ? AND user = ? AND calendar = ?',
-                                    [$lastInsertId, $userId, $calendarId],
+                            if ($hasRecord) {
+                                $this->connection->update(
+                                    'tl_event_registration_reminder_notification',
+                                    $set,
+                                    ['id' => $arrReminder['id']]
+                                );
+                            } else {
+                                $this->connection->insert(
+                                    'tl_event_registration_reminder_notification',
+                                    $set
                                 );
                             }
                         }
