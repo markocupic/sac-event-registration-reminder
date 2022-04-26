@@ -15,4 +15,4 @@ declare(strict_types=1);
 /*
  * Backend modules
  */
-$GLOBALS['TL_LANG']['MOD']['event_registration_reminder_notification'] = ['Event Benach. Reminder.', 'Administrieren Sie die Benachrichtigungen an die Tourenleiter bei versäumter Bearbeitung von Event-Anmeldungen.'];
+$GLOBALS['TL_LANG']['MOD']['event_registration_reminder_notification'] = ['Event Benach. Reminder', 'Administrieren Sie die Benachrichtigungen an die Tourenleiter bei versäumter Bearbeitung von Event-Anmeldungen.'];
