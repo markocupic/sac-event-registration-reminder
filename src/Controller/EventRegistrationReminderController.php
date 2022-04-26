@@ -175,7 +175,7 @@ class EventRegistrationReminderController extends AbstractController
 
                             $set = [
                                 'tstamp' => $this->stopwatch->getRequestTime(),
-                                'addedOn' => $hasRecord ? (int) $arrReminder['addedOn'] : $this->stopwatch->getRequestTime(),
+                                'addedOn' => $this->stopwatch->getRequestTime(),
                                 'prevReminderTstamp' => $prevReminderTstamp,
                                 'title' => $strTitle,
                                 'user' => $userId,
@@ -183,19 +183,18 @@ class EventRegistrationReminderController extends AbstractController
                                 'history' => implode("\n", $arrHistory),
                             ];
 
-                            // Insert or update the record will prevent
-                            // the user from being notified again
+                            // Create a new record that prevents
+                            // the user from being notified again and again
                             // before the expiry of the "remindEach" limit
-                            if ($hasRecord) {
-                                $this->connection->update(
-                                    'tl_event_registration_reminder_notification',
-                                    $set,
-                                    ['id' => $arrReminder['id']]
-                                );
-                            } else {
-                                $this->connection->insert(
-                                    'tl_event_registration_reminder_notification',
-                                    $set
+                            $affectedRows = $this->connection->insert('tl_event_registration_reminder_notification', $set);
+
+                            if ($affectedRows) {
+                                $lastInsertId = $this->connection->lastInsertId();
+
+                                // Delete the old record
+                                $this->connection->executeStatement(
+                                    'DELETE FROM tl_event_registration_reminder_notification WHERE id != ? AND user = ? AND calendar = ?',
+                                    [$lastInsertId, $userId, $calendarId],
                                 );
                             }
                         }
