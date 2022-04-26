@@ -104,7 +104,7 @@ class EventRegistrationReminderController extends AbstractController
 
         $itCalendar = (new Data($arrData))->getIterator();
 
-        $emailCount = 0;
+        $notificationCount = 0;
         $userCount = 0;
 
         // Process each calendar
@@ -136,9 +136,9 @@ class EventRegistrationReminderController extends AbstractController
                         ];
 
                         // The notification limit is adjustable (Symfony Friendly Configuration)
-                        ++$emailCount;
+                        ++$notificationCount;
 
-                        if ($emailCount > $this->notificationLimitPerRequest) {
+                        if ($notificationCount > $this->notificationLimitPerRequest) {
                             break 2;
                         }
 
@@ -209,7 +209,7 @@ class EventRegistrationReminderController extends AbstractController
         }
 
         // Log and send a response
-        $responseMsg = sprintf('SAC event registration reminder: Processed %d users and sent %d notifications. Script runtime: %d s.', $userCount, $emailCount, $this->stopwatch->getDuration());
+        $responseMsg = sprintf('SAC event registration reminder: Processed %d users and sent %d notifications. Script runtime: %d s.', $userCount, $notificationCount, $this->stopwatch->getDuration());
 
         $this->log($responseMsg);
 
