@@ -165,7 +165,7 @@ class EventRegistrationReminderController extends AbstractController
 
                             // Get the previous reminder added-on timestamp, if there is one
                             // and append it to the history
-                            $arrHistory = $hasRecord ? explode("\n", $arrReminder['history']) : [];
+                            $arrHistory = $hasRecord ? explode("\n", (string) $arrReminder['history']) : [];
 
                             // Add the latest record to the top
                             array_unshift($arrHistory, sprintf('Sent a reminder to %s on %s;', $userName, date('d.m.Y H:i:s', $this->stopwatch->getRequestTime())));
