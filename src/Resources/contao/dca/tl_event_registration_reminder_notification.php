@@ -20,8 +20,8 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
         'closed'        => true,
         'sql'           => [
             'keys' => [
-                'id'                    => 'primary',
-                'addedOn,user,calendar' => 'index',
+                'id'                      => 'primary',
+                'dateAdded,user,calendar' => 'index',
             ],
         ],
     ],
@@ -69,7 +69,7 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
         ],
     ],
     'palettes' => [
-        'default' => '{first_legend},title,user,calendar,addedOn,prevReminderTstamp,history',
+        'default' => '{first_legend},title,user,calendar,dateAdded,prevReminderTstamp,history',
     ],
     'fields'   => [
         'id'                 => [
@@ -88,7 +88,7 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
             'sorting'   => true,
             'sql'       => "varchar(255) NOT NULL default ''",
         ],
-        'addedOn'            => [
+        'dateAdded'          => [
             'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
             'flag'      => DataContainer::SORT_DAY_DESC,
             'inputType' => 'text',

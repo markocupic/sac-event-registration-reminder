@@ -156,7 +156,7 @@ class EventRegistrationReminderController extends AbstractController
                             $hasRecord = \is_array($arrReminder);
 
                             // Get the previous reminder added-on timestamp, if there is one
-                            $prevReminderTstamp = $hasRecord ? (int) $arrReminder['addedOn'] : 0;
+                            $prevReminderTstamp = $hasRecord ? (int) $arrReminder['dateAdded'] : 0;
 
                             // Add a suffix to the title to point out lazy instructors/tour guides ;-)
                             $blnAddSuffix = $prevReminderTstamp && ($prevReminderTstamp + 2 * $reminderIntervalD * 86400) > $this->stopwatch->getRequestTime();
@@ -175,7 +175,7 @@ class EventRegistrationReminderController extends AbstractController
 
                             $set = [
                                 'tstamp' => $this->stopwatch->getRequestTime(),
-                                'addedOn' => $this->stopwatch->getRequestTime(),
+                                'dateAdded' => $this->stopwatch->getRequestTime(),
                                 'prevReminderTstamp' => $prevReminderTstamp,
                                 'title' => $strTitle,
                                 'user' => $userId,

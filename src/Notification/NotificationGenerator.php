@@ -108,7 +108,7 @@ class NotificationGenerator
                         continue;
                     }
 
-                    $elapsedSeconds = $currentTime - (int) $registration->addedOn;
+                    $elapsedSeconds = $currentTime - (int) $registration->dateAdded;
 
                     if ($elapsedSeconds < 0) {
                         $elapsedSeconds = 0;

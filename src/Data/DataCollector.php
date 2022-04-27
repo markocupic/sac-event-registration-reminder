@@ -125,7 +125,7 @@ class DataCollector
 
         // Do not send reminders if the user is still within the sendReminderEach time limit
         $result = $this->connection->fetchOne(
-            'SELECT user FROM tl_event_registration_reminder_notification WHERE addedOn > ? AND user = ? AND calendar = ?',
+            'SELECT user FROM tl_event_registration_reminder_notification WHERE dateAdded > ? AND user = ? AND calendar = ?',
             [$limit, $userId, $calendarId],
         );
 
@@ -156,6 +156,6 @@ class DataCollector
      */
     private function getRegistrationsByEventAndState(int $intEventId, string $strState, int $intTimeLimit): array
     {
-        return $this->connection->fetchFirstColumn('SELECT * FROM tl_calendar_events_member WHERE eventId = ? AND stateOfSubscription = ? AND addedOn <= ?', [$intEventId, $strState, $intTimeLimit]);
+        return $this->connection->fetchFirstColumn('SELECT * FROM tl_calendar_events_member WHERE eventId = ? AND stateOfSubscription = ? AND dateAdded <= ?', [$intEventId, $strState, $intTimeLimit]);
     }
 }
