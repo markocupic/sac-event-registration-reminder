@@ -23,7 +23,7 @@ use Markocupic\SacEventRegistrationReminder\Data\DataCollector;
 use Markocupic\SacEventRegistrationReminder\Notification\NotificationGenerator;
 use Markocupic\SacEventRegistrationReminder\Notification\NotificationHelper;
 use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
-use Markocupic\SacEventToolBundle\Config\EventSubscriptionLevel;
+use Markocupic\SacEventToolBundle\Config\EventSubscriptionState;
 use NotificationCenter\Model\Notification;
 use Psr\Log\LoggerInterface;
 use Safe\Exceptions\StringsException;
@@ -97,7 +97,7 @@ class EventRegistrationReminderController extends AbstractController
 
         $this->framework->initialize();
 
-        $state = EventSubscriptionLevel::SUBSCRIPTION_NOT_CONFIRMED;
+        $state = EventSubscriptionState::SUBSCRIPTION_NOT_CONFIRMED;
 
         // Get the data array (time-consuming!)
         $arrData = $this->dataCollector->getData($state);
