@@ -1,0 +1,14 @@
+{% for event in events %}
+    -----------------------------------------------------
+    {{ event.trans.event_type }}: {{ event.event_title }}
+    {% for registration in event.registrations_outside_deadline %}
+        - {{ registration.trans.participant }} {{ registration.firstname }} {{ registration.lastname }}, {{ registration.trans.sac_member_id }} ({{ registration.trans.days_registered }})
+    {% endfor %}
+    {% if event.has_registrations_within_deadline %}
+
+        {{ 'MSC.serr_these_registrations_are_also_pending'|trans({}, 'contao_default') }}
+        {% for registration in event.registrations_within_deadline %}
+            - {{ registration.trans.participant }} {{ registration.firstname }} {{ registration.lastname }}, {{ registration.trans.sac_member_id }} ({{ registration.trans.days_registered }})
+        {% endfor %}
+    {% endif %}
+{% endfor %}

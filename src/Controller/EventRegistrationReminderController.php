@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of SAC Event Registration Reminder.
  *
- * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2023 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -34,36 +34,22 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-/**
- * @Route("/_event_registration_reminder/{sid}", name=EventRegistrationReminderController::class, methods={"GET"}, defaults={"_locale":"%sac_evt_reg_reminder.default_locale%"})
- */
+#[Route('/_event_registration_reminder/{sid}', name: EventRegistrationReminderController::class, defaults: ['_locale' => '%sac_evt_reg_reminder.default_locale%'], methods: ['GET'])]
 class EventRegistrationReminderController extends AbstractController
 {
-    private ContaoFramework $framework;
-    private Connection $connection;
-    private DataCollector $dataCollector;
-    private NotificationGenerator $messageGenerator;
-    private NotificationHelper $notificationHelper;
-    private Stopwatch $stopwatch;
-    private bool $disable;
-    private string $sid;
-    private int $notificationLimitPerRequest;
-    private string $defaultLocale;
-    private ?LoggerInterface $logger;
-
-    public function __construct(ContaoFramework $framework, Connection $connection, DataCollector $dataCollector, NotificationGenerator $messageGenerator, NotificationHelper $notificationHelper, Stopwatch $stopwatch, bool $disable, string $sid, int $notificationLimitPerRequest, string $defaultLocale, ?LoggerInterface $logger)
-    {
-        $this->framework = $framework;
-        $this->connection = $connection;
-        $this->dataCollector = $dataCollector;
-        $this->messageGenerator = $messageGenerator;
-        $this->notificationHelper = $notificationHelper;
-        $this->stopwatch = $stopwatch;
-        $this->disable = $disable;
-        $this->sid = $sid;
-        $this->notificationLimitPerRequest = $notificationLimitPerRequest;
-        $this->defaultLocale = $defaultLocale;
-        $this->logger = $logger;
+    public function __construct(
+        private readonly ContaoFramework $framework,
+        private readonly Connection $connection,
+        private readonly DataCollector $dataCollector,
+        private readonly NotificationGenerator $messageGenerator,
+        private readonly NotificationHelper $notificationHelper,
+        private readonly Stopwatch $stopwatch,
+        private readonly bool $disable,
+        private readonly string $sid,
+        private readonly int $notificationLimitPerRequest,
+        private readonly string $defaultLocale,
+        private readonly LoggerInterface|null $logger,
+    ) {
     }
 
     /**
@@ -111,8 +97,10 @@ class EventRegistrationReminderController extends AbstractController
         while ($itCalendar->valid()) {
             $calendarId = (int) $itCalendar->key();
             $arrUsers = $itCalendar->current();
+
             // Get the reminder interval in days
             $reminderIntervalD = (int) $this->connection->fetchOne('SELECT sendReminderEach FROM tl_calendar WHERE id = ?', [$calendarId]);
+
             // Process each backend user
             if (\is_array($arrUsers)) {
                 $itUsers = (new Data($arrUsers))->getIterator();
@@ -218,7 +206,7 @@ class EventRegistrationReminderController extends AbstractController
     /**
      * @throws DbalException
      */
-    private function getNotification(int $calendarId): ?Notification
+    private function getNotification(int $calendarId): Notification|null
     {
         if ($id = $this->connection->fetchOne('SELECT sendReminderNotification from tl_calendar WHERE id = ?', [$calendarId])) {
             $notificationAdapter = $this->framework->getAdapter(Notification::class);
@@ -233,11 +221,9 @@ class EventRegistrationReminderController extends AbstractController
 
     private function log(string $text): void
     {
-        if (null !== $this->logger) {
-            $this->logger->info(
-                $text,
-                ['contao' => new ContaoContext(__METHOD__, ContaoContext::CRON)]
-            );
-        }
+        $this->logger?->info(
+            $text,
+            ['contao' => new ContaoContext(__METHOD__, ContaoContext::CRON)]
+        );
     }
 }

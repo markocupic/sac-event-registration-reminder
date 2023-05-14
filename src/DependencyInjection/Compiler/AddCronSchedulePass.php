@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of SAC Event Registration Reminder.
  *
- * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2023 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Markocupic\SacEventRegistrationReminder\DependencyInjection\Compiler;
 
+use Markocupic\SacEventRegistrationReminder\Cron\NotificationCron;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -24,7 +25,7 @@ class AddCronSchedulePass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->has('Markocupic\SacEventRegistrationReminder\Cron\NotificationCron')) {
+        if (!$container->has(NotificationCron::class)) {
             return;
         }
 
@@ -34,14 +35,12 @@ class AddCronSchedulePass implements CompilerPassInterface
 
         $cronSchedule = $container->getParameter('sac_evt_reg_reminder.cron_schedule');
 
-        $cron = $container->findDefinition('Markocupic\SacEventRegistrationReminder\Cron\NotificationCron');
+        $cron = $container->findDefinition(NotificationCron::class);
 
         $cron->clearTag('contao.cronjob');
 
         $cron->addTag('contao.cronjob', [
             'interval' => $cronSchedule,
         ]);
-
-        //die(print_r($cron->getTags(),true));
     }
 }

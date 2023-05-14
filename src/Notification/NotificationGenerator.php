@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of SAC Event Registration Reminder.
  *
- * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2023 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -14,37 +14,32 @@ declare(strict_types=1);
 
 namespace Markocupic\SacEventRegistrationReminder\Notification;
 
-use Markocupic\SacEventToolBundle\Model\CalendarEventsMemberModel;
 use Contao\CalendarEventsModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\UserModel;
 use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
 use Markocupic\SacEventRegistrationReminder\String\Sanitizer;
+use Markocupic\SacEventToolBundle\Model\CalendarEventsMemberModel;
 use Safe\Exceptions\StringsException;
-use function Safe\sprintf;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use function Safe\sprintf;
 
 class NotificationGenerator
 {
-    private ContaoFramework $framework;
-    private Environment $twig;
-    private TranslatorInterface $translator;
-    private Sanitizer $sanitizer;
-    private Stopwatch $stopwatch;
-    private ?array $data;
-    private ?UserModel $user;
+    private array|null $data;
+    private UserModel|null $user;
 
-    public function __construct(ContaoFramework $framework, Environment $twig, TranslatorInterface $translator, Sanitizer $sanitizer, Stopwatch $stopwatch)
-    {
-        $this->framework = $framework;
-        $this->twig = $twig;
-        $this->translator = $translator;
-        $this->sanitizer = $sanitizer;
-        $this->stopwatch = $stopwatch;
+    public function __construct(
+        private readonly ContaoFramework $framework,
+        private readonly Environment $twig,
+        private readonly TranslatorInterface $translator,
+        private readonly Sanitizer $sanitizer,
+        private readonly Stopwatch $stopwatch,
+    ) {
     }
 
     /**
@@ -71,7 +66,7 @@ class NotificationGenerator
         $userModelAdapter = $this->framework->getAdapter(UserModel::class);
 
         if (null === ($this->user = $userModelAdapter->findByPk($userId))) {
-            throw new \Exception(sprintf('User with ID %s not found', $userId));
+            throw new \Exception(sprintf('User with ID %d not found', $userId));
         }
     }
 

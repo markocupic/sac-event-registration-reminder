@@ -1,0 +1,17 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            $disable: '%sac_evt_reg_reminder.disable%'
+            $allowWebScope: '%sac_evt_reg_reminder.allow_web_scope%'
+            $sid: '%sac_evt_reg_reminder.sid%'
+            $notificationLimitPerRequest: '%sac_evt_reg_reminder.notification_limit_per_request%'
+            $defaultLocale: '%sac_evt_reg_reminder.default_locale%'
+            #$cronSchedule: '%sac_evt_reg_reminder.cron_schedule%'
+
+    Markocupic\SacEventRegistrationReminder\:
+        resource: ../src/
+        exclude: ../src/{DependencyInjection,Model,Data/Data.php}
+
+

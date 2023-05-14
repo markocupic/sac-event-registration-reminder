@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of SAC Event Registration Reminder.
  *
- * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2023 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Markocupic\SacEventRegistrationReminder\DependencyInjection;
 
+use Markocupic\SacEventRegistrationReminder\Cron\NotificationCron;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -40,12 +41,10 @@ class MarkocupicSacEventRegistrationReminderExtension extends Extension
 
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__.'/../Resources/config')
+            new FileLocator(__DIR__.'/../../config')
         );
 
-        $loader->load('parameters.yml');
-        $loader->load('services.yml');
-        $loader->load('listener.yml');
+        $loader->load('services.yaml');
 
         $rootKey = $this->getAlias();
 
@@ -61,7 +60,7 @@ class MarkocupicSacEventRegistrationReminderExtension extends Extension
 
     private function addCronSchedule(ContainerBuilder $container): void
     {
-        if (!$container->has('Markocupic\SacEventRegistrationReminder\Cron\NotificationCron')) {
+        if (!$container->has(NotificationCron::class)) {
             return;
         }
 
@@ -74,7 +73,7 @@ class MarkocupicSacEventRegistrationReminderExtension extends Extension
         ;
 
         $cron = $container
-            ->findDefinition('Markocupic\SacEventRegistrationReminder\Cron\NotificationCron')
+            ->findDefinition(NotificationCron::class)
         ;
 
         $cron->clearTag('contao.cronjob');

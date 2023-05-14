@@ -12,19 +12,7 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/sac-event-registration-reminder
  */
 
-namespace Markocupic\SacEventRegistrationReminder\Data;
-
-class Data
-{
-    private array $data;
-
-    public function __construct(array $data)
-    {
-        $this->data = $data;
-    }
-
-    public function getIterator(): \ArrayIterator
-    {
-        return (new \ArrayObject($this->data))->getIterator();
-    }
-}
+/*
+ * Backend modules
+ */
+$GLOBALS['TL_LANG']['MOD']['event_registration_reminder_notification'] = ['Event Benach. Reminder', 'Administrieren Sie die Benachrichtigungen an die Tourenleiter bei versäumter Bearbeitung von Event-Anmeldungen.'];

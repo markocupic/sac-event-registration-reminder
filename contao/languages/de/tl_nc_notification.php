@@ -12,19 +12,4 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/sac-event-registration-reminder
  */
 
-namespace Markocupic\SacEventRegistrationReminder\Data;
-
-class Data
-{
-    private array $data;
-
-    public function __construct(array $data)
-    {
-        $this->data = $data;
-    }
-
-    public function getIterator(): \ArrayIterator
-    {
-        return (new \ArrayObject($this->data))->getIterator();
-    }
-}
+$GLOBALS['TL_LANG']['tl_nc_notification']['type']['event_registration_reminder'] = ['Reminder an TL die Bearbeitung vesäumter Event-Registrierungen nachzuholen', 'Senden Sie einen Reminder an TL, die Bearbeitung versäumter Event-Registrierungen nachzuholen.'];

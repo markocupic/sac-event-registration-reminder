@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of SAC Event Registration Reminder.
  *
- * (c) Marko Cupic 2022 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2023 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -16,32 +16,21 @@ namespace Markocupic\SacEventRegistrationReminder\Notification;
 
 use Contao\CalendarModel;
 use Contao\UserModel;
-use Doctrine\DBAL\Connection;
 use NotificationCenter\Model\Notification;
 use Safe\Exceptions\StringsException;
 use function Safe\sprintf;
 
 class NotificationHelper
 {
-    private Connection $connection;
-
-    private ?Notification $notification;
-
-    private ?UserModel $user;
-
-    private ?array $tokens;
-
-    public function __construct(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
+    private Notification|null $notification = null;
+    private CalendarModel|null $calendar = null;
+    private UserModel|null $user = null;
+    private array|null $tokens = null;
 
     /**
      * @throws StringsException
-     *
-     * @return array
      */
-    public function send(Notification $notification, int $userId, int $calendarId, array $arrTokens, string $defaultLocale)
+    public function send(Notification $notification, int $userId, int $calendarId, array $arrTokens, string $defaultLocale): array
     {
         $this->initialize($notification, $userId, $calendarId, $arrTokens);
 
