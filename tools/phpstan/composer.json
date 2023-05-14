@@ -1,5 +1,6 @@
 {
     "require": {
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^1.10",
+        "contao/test-case": "^4.13"
     }
 }
