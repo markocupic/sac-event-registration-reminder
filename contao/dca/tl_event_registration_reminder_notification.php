@@ -93,14 +93,14 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
             'flag'      => DataContainer::SORT_DAY_DESC,
             'inputType' => 'text',
             'sorting'   => true,
-            'sql'       => "int(10) unsigned NOT NULL default '0'",
+            'sql'       => "int(11) unsigned NOT NULL default 0",
         ],
         'prevReminderTstamp' => [
             'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
             'flag'      => DataContainer::SORT_DAY_DESC,
             'inputType' => 'text',
             'sorting'   => true,
-            'sql'       => "int(10) unsigned NOT NULL default '0'",
+            'sql'       => "int(11) unsigned NOT NULL default 0",
         ],
         'user'               => [
             'eval'       => ['tl_class' => 'w50'],
