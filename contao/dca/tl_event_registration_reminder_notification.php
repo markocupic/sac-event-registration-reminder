@@ -13,10 +13,11 @@ declare(strict_types=1);
  */
 
 use Contao\DataContainer;
+use Contao\DC_Table;
 
 $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
     'config'   => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'closed'        => true,
         'sql'           => [
             'keys' => [
