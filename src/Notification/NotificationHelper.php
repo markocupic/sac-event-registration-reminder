@@ -16,37 +16,37 @@ namespace Markocupic\SacEventRegistrationReminder\Notification;
 
 use Contao\CalendarModel;
 use Contao\UserModel;
-use NotificationCenter\Model\Notification;
-use Safe\Exceptions\StringsException;
-use function Safe\sprintf;
+use Terminal42\NotificationCenterBundle\NotificationCenter;
+use Terminal42\NotificationCenterBundle\Receipt\ReceiptCollection;
 
 class NotificationHelper
 {
-    private Notification|null $notification = null;
     private CalendarModel|null $calendar = null;
     private UserModel|null $user = null;
+    private int|null $notificationId = null;
     private array|null $tokens = null;
 
-    /**
-     * @throws StringsException
-     */
-    public function send(Notification $notification, int $userId, int $calendarId, array $arrTokens, string $defaultLocale): array
+    public function __construct(
+        private readonly NotificationCenter $notificationCenter,
+    ){
+
+    }
+
+    public function send(int $notificationId, int $userId, int $calendarId, array $arrTokens, string $defaultLocale): ReceiptCollection
     {
-        $this->initialize($notification, $userId, $calendarId, $arrTokens);
+        $this->initialize($notificationId, $userId, $calendarId, $arrTokens);
 
         $this->prepareTokens();
 
         $lang = $this->user->language ?: $defaultLocale;
 
-        return $this->notification->send($this->tokens, $lang);
+        return $this->notificationCenter->sendNotification($this->notificationId,$this->tokens,$lang);
+
     }
 
-    /**
-     * @throws StringsException
-     */
-    private function initialize(Notification $notification, int $userId, int $calendarId, array $arrTokens): void
+    private function initialize(int $notificationId, int $userId, int $calendarId, array $arrTokens): void
     {
-        $this->notification = $notification;
+        $this->notificationId = $notificationId;
 
         if (null === ($this->user = UserModel::findByPk($userId))) {
             throw new \Exception(sprintf('User with ID %s not found', $userId));

@@ -66,7 +66,7 @@ class NotificationGenerator
         $userModelAdapter = $this->framework->getAdapter(UserModel::class);
 
         if (null === ($this->user = $userModelAdapter->findByPk($userId))) {
-            throw new \Exception(sprintf('User with ID %d not found', $userId));
+            throw new \Exception(\sprintf('User with ID %d not found', $userId));
         }
     }
 

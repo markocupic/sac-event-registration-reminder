@@ -18,13 +18,13 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Types\Types;
 use Markocupic\SacEventRegistrationReminder\Data\Data;
 use Markocupic\SacEventRegistrationReminder\Data\DataCollector;
 use Markocupic\SacEventRegistrationReminder\Notification\NotificationGenerator;
 use Markocupic\SacEventRegistrationReminder\Notification\NotificationHelper;
 use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
 use Markocupic\SacEventToolBundle\Config\EventSubscriptionState;
-use NotificationCenter\Model\Notification;
 use Psr\Log\LoggerInterface;
 use Safe\Exceptions\StringsException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -95,11 +95,11 @@ class EventRegistrationReminderController extends AbstractController
 
         // Process each calendar
         while ($itCalendar->valid()) {
-            $calendarId = (int) $itCalendar->key();
+            $calendarId = (int)$itCalendar->key();
             $arrUsers = $itCalendar->current();
 
             // Get the reminder interval in days
-            $reminderIntervalD = (int) $this->connection->fetchOne('SELECT sendReminderEach FROM tl_calendar WHERE id = ?', [$calendarId]);
+            $reminderIntervalD = (int)$this->connection->fetchOne('SELECT sendReminderEach FROM tl_calendar WHERE id = ?', [$calendarId]);
 
             // Process each backend user
             if (\is_array($arrUsers)) {
@@ -108,17 +108,16 @@ class EventRegistrationReminderController extends AbstractController
                 while ($itUsers->valid()) {
                     ++$userCount;
 
-                    $userId = (int) $itUsers->key();
+                    $userId = (int)$itUsers->key();
 
                     $arrUser = $itUsers->current();
 
                     // Generate the guest list
                     $strRegistrations = $this->messageGenerator
-                        ->generate($arrUser, $userId)
-                    ;
+                        ->generate($arrUser, $userId);
 
                     // Get the notification
-                    if (null !== ($notification = $this->getNotification($calendarId))) {
+                    if (null !== ($notificationId = $this->getNotificationId($calendarId))) {
                         $arrTokens = [
                             'registrations' => $strRegistrations,
                         ];
@@ -130,9 +129,9 @@ class EventRegistrationReminderController extends AbstractController
                             break 2;
                         }
 
-                        $arr = $this->notificationHelper->send($notification, $userId, $calendarId, $arrTokens, $this->defaultLocale);
+                        $receiptCollection = $this->notificationHelper->send($notificationId, $userId, $calendarId, $arrTokens, $this->defaultLocale);
 
-                        if (!empty($arr) && \is_array($arr)) {
+                        if ($receiptCollection->count()) {
                             $userName = $this->connection->fetchOne('SELECT name FROM tl_user WHERE id = ?', [$userId]);
 
                             // Get the previous reminder added-on timestamp, if there is one
@@ -144,7 +143,7 @@ class EventRegistrationReminderController extends AbstractController
                             $hasRecord = \is_array($arrReminder);
 
                             // Get the previous reminder added-on timestamp, if there is one
-                            $prevReminderTstamp = $hasRecord ? (int) $arrReminder['dateAdded'] : 0;
+                            $prevReminderTstamp = $hasRecord ? (int)$arrReminder['dateAdded'] : 0;
 
                             // Add a suffix to the title to point out lazy instructors/tour guides ;-)
                             $blnAddSuffix = $prevReminderTstamp && ($prevReminderTstamp + 2 * $reminderIntervalD * 86400) > $this->stopwatch->getRequestTime();
@@ -153,7 +152,7 @@ class EventRegistrationReminderController extends AbstractController
 
                             // Get the previous reminder added-on timestamp, if there is one
                             // and append it to the history
-                            $arrHistory = $hasRecord ? explode("\n", (string) $arrReminder['history']) : [];
+                            $arrHistory = $hasRecord ? explode("\n", (string)$arrReminder['history']) : [];
 
                             // Add the latest record to the top
                             array_unshift($arrHistory, sprintf('Sent a reminder to %s on %s;', $userName, date('d.m.Y H:i:s', $this->stopwatch->getRequestTime())));
@@ -162,13 +161,13 @@ class EventRegistrationReminderController extends AbstractController
                             $arrHistory = \array_slice($arrHistory, 0, 10);
 
                             $set = [
-                                'tstamp' => $this->stopwatch->getRequestTime(),
-                                'dateAdded' => $this->stopwatch->getRequestTime(),
+                                'tstamp'             => $this->stopwatch->getRequestTime(),
+                                'dateAdded'          => $this->stopwatch->getRequestTime(),
                                 'prevReminderTstamp' => $prevReminderTstamp,
-                                'title' => $strTitle,
-                                'user' => $userId,
-                                'calendar' => $calendarId,
-                                'history' => implode("\n", $arrHistory),
+                                'title'              => $strTitle,
+                                'user'               => $userId,
+                                'calendar'           => $calendarId,
+                                'history'            => implode("\n", $arrHistory),
                             ];
 
                             // Create a new record that prevents
@@ -203,17 +202,34 @@ class EventRegistrationReminderController extends AbstractController
         return new Response($responseMsg);
     }
 
-    /**
-     * @throws DbalException
-     */
-    private function getNotification(int $calendarId): Notification|null
+    private function getNotificationId(int $calendarId): int|null
     {
-        if ($id = $this->connection->fetchOne('SELECT sendReminderNotification from tl_calendar WHERE id = ?', [$calendarId])) {
-            $notificationAdapter = $this->framework->getAdapter(Notification::class);
+        $notificationId = $this->connection->fetchOne(
+            'SELECT sendReminderNotification from tl_calendar WHERE id = :calendarId',
+            [
+                'calendarId' => $calendarId,
+            ],
+            [
+                'calendarId' => Types::INTEGER,
+            ],
+        );
 
-            if (null !== ($notification = $notificationAdapter->findByPk($id))) {
-                return $notification;
-            }
+        if (false === $notificationId) {
+            return null;
+        }
+
+        $notificationId = $this->connection->fetchOne(
+            'SELECT id FROM tl_nc_notification WHERE id = :id',
+            [
+                'id' => (int)$notificationId,
+            ],
+            [
+                'id' => Types::INTEGER,
+            ]
+        );
+
+        if (false !== $notificationId) {
+            return $notificationId;
         }
 
         return null;
