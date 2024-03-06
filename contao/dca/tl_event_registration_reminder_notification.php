@@ -37,36 +37,7 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
             'format' => '%s',
         ],
         'global_operations' => [
-            'all' => [
-                'label'      => &$GLOBALS['TL_LANG']['MSC']['all'],
-                'href'       => 'act=select',
-                'class'      => 'header_edit_all',
-                'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
-            ],
-        ],
-        'operations'        => [
-            'edit'   => [
-                'label' => &$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['edit'],
-                'href'  => 'act=edit',
-                'icon'  => 'edit.svg',
-            ],
-            'copy'   => [
-                'label' => &$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['copy'],
-                'href'  => 'act=copy',
-                'icon'  => 'copy.svg',
-            ],
-            'delete' => [
-                'label'      => &$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['delete'],
-                'href'       => 'act=delete',
-                'icon'       => 'delete.svg',
-                'attributes' => 'onclick="if(!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\'))return false;Backend.getScrollOffset()"',
-            ],
-            'show'   => [
-                'label'      => &$GLOBALS['TL_LANG']['tl_event_registration_reminder_notification']['show'],
-                'href'       => 'act=show',
-                'icon'       => 'show.svg',
-                'attributes' => 'style="margin-right:3px"',
-            ],
+            'all',
         ],
     ],
     'palettes' => [
