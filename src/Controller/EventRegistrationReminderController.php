@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of SAC Event Registration Reminder.
  *
- * (c) Marko Cupic 2023 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2024 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -95,11 +95,11 @@ class EventRegistrationReminderController extends AbstractController
 
         // Process each calendar
         while ($itCalendar->valid()) {
-            $calendarId = (int)$itCalendar->key();
+            $calendarId = (int) $itCalendar->key();
             $arrUsers = $itCalendar->current();
 
             // Get the reminder interval in days
-            $reminderIntervalD = (int)$this->connection->fetchOne('SELECT sendReminderEach FROM tl_calendar WHERE id = ?', [$calendarId]);
+            $reminderIntervalD = (int) $this->connection->fetchOne('SELECT sendReminderEach FROM tl_calendar WHERE id = ?', [$calendarId]);
 
             // Process each backend user
             if (\is_array($arrUsers)) {
@@ -108,13 +108,14 @@ class EventRegistrationReminderController extends AbstractController
                 while ($itUsers->valid()) {
                     ++$userCount;
 
-                    $userId = (int)$itUsers->key();
+                    $userId = (int) $itUsers->key();
 
                     $arrUser = $itUsers->current();
 
                     // Generate the guest list
                     $strRegistrations = $this->messageGenerator
-                        ->generate($arrUser, $userId);
+                        ->generate($arrUser, $userId)
+                    ;
 
                     // Get the notification
                     if (null !== ($notificationId = $this->getNotificationId($calendarId))) {
@@ -143,7 +144,7 @@ class EventRegistrationReminderController extends AbstractController
                             $hasRecord = \is_array($arrReminder);
 
                             // Get the previous reminder added-on timestamp, if there is one
-                            $prevReminderTstamp = $hasRecord ? (int)$arrReminder['dateAdded'] : 0;
+                            $prevReminderTstamp = $hasRecord ? (int) $arrReminder['dateAdded'] : 0;
 
                             // Add a suffix to the title to point out lazy instructors/tour guides ;-)
                             $blnAddSuffix = $prevReminderTstamp && ($prevReminderTstamp + 2 * $reminderIntervalD * 86400) > $this->stopwatch->getRequestTime();
@@ -152,7 +153,7 @@ class EventRegistrationReminderController extends AbstractController
 
                             // Get the previous reminder added-on timestamp, if there is one
                             // and append it to the history
-                            $arrHistory = $hasRecord ? explode("\n", (string)$arrReminder['history']) : [];
+                            $arrHistory = $hasRecord ? explode("\n", (string) $arrReminder['history']) : [];
 
                             // Add the latest record to the top
                             array_unshift($arrHistory, sprintf('Sent a reminder to %s on %s;', $userName, date('d.m.Y H:i:s', $this->stopwatch->getRequestTime())));
@@ -161,13 +162,13 @@ class EventRegistrationReminderController extends AbstractController
                             $arrHistory = \array_slice($arrHistory, 0, 10);
 
                             $set = [
-                                'tstamp'             => $this->stopwatch->getRequestTime(),
-                                'dateAdded'          => $this->stopwatch->getRequestTime(),
+                                'tstamp' => $this->stopwatch->getRequestTime(),
+                                'dateAdded' => $this->stopwatch->getRequestTime(),
                                 'prevReminderTstamp' => $prevReminderTstamp,
-                                'title'              => $strTitle,
-                                'user'               => $userId,
-                                'calendar'           => $calendarId,
-                                'history'            => implode("\n", $arrHistory),
+                                'title' => $strTitle,
+                                'user' => $userId,
+                                'calendar' => $calendarId,
+                                'history' => implode("\n", $arrHistory),
                             ];
 
                             // Create a new record that prevents
@@ -221,7 +222,7 @@ class EventRegistrationReminderController extends AbstractController
         $notificationId = $this->connection->fetchOne(
             'SELECT id FROM tl_nc_notification WHERE id = :id',
             [
-                'id' => (int)$notificationId,
+                'id' => (int) $notificationId,
             ],
             [
                 'id' => Types::INTEGER,

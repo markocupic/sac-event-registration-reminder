@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of SAC Event Registration Reminder.
  *
- * (c) Marko Cupic 2023 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2024 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -15,10 +15,7 @@ declare(strict_types=1);
 namespace Markocupic\SacEventRegistrationReminder\Cron;
 
 use Contao\CoreBundle\Cron\Cron;
-use Contao\CoreBundle\Exception\RedirectResponseException;
 use Markocupic\SacEventRegistrationReminder\Controller\EventRegistrationReminderController;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Define the cron schedule
@@ -27,10 +24,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * Use a real cronjob:
  * wget -q -O /dev/null 'https://<domain>/_contao/cron' >/dev/null 2>&1.
  */
-class NotificationCron extends AbstractController
+class NotificationCron
 {
     public function __construct(
-        private readonly UrlGeneratorInterface $router,
+        private readonly EventRegistrationReminderController $eventRegistrationReminderController,
         private readonly bool $allowWebScope,
         private readonly string $sid,
     ) {
@@ -44,14 +41,7 @@ class NotificationCron extends AbstractController
             return;
         }
 
-        // Redirect to the controller
-        $url = $this->router
-            ->generate(
-                EventRegistrationReminderController::class,
-                ['sid' => $this->sid],
-            )
-        ;
+        $this->eventRegistrationReminderController->run();
 
-        throw new RedirectResponseException($url);
     }
 }

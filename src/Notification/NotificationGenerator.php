@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of SAC Event Registration Reminder.
  *
- * (c) Marko Cupic 2023 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2024 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -26,7 +26,6 @@ use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use function Safe\sprintf;
 
 class NotificationGenerator
 {
@@ -66,7 +65,7 @@ class NotificationGenerator
         $userModelAdapter = $this->framework->getAdapter(UserModel::class);
 
         if (null === ($this->user = $userModelAdapter->findByPk($userId))) {
-            throw new \Exception(\sprintf('User with ID %d not found', $userId));
+            throw new \Exception(sprintf('User with ID %d not found', $userId));
         }
     }
 

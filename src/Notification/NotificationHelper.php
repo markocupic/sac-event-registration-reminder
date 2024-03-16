@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of SAC Event Registration Reminder.
  *
- * (c) Marko Cupic 2023 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2024 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -28,8 +28,7 @@ class NotificationHelper
 
     public function __construct(
         private readonly NotificationCenter $notificationCenter,
-    ){
-
+    ) {
     }
 
     public function send(int $notificationId, int $userId, int $calendarId, array $arrTokens, string $defaultLocale): ReceiptCollection
@@ -40,8 +39,7 @@ class NotificationHelper
 
         $lang = $this->user->language ?: $defaultLocale;
 
-        return $this->notificationCenter->sendNotification($this->notificationId,$this->tokens,$lang);
-
+        return $this->notificationCenter->sendNotification($this->notificationId, $this->tokens, $lang);
     }
 
     private function initialize(int $notificationId, int $userId, int $calendarId, array $arrTokens): void

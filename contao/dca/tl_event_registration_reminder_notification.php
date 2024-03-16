@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of SAC Event Registration Reminder.
  *
- * (c) Marko Cupic 2023 <m.cupic@gmx.ch>
+ * (c) Marko Cupic 2024 <m.cupic@gmx.ch>
  * @license MIT
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -62,6 +62,7 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
         ],
         'dateAdded'          => [
             'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+            'exclude'    => true,
             'flag'      => DataContainer::SORT_DAY_DESC,
             'inputType' => 'text',
             'sorting'   => true,
@@ -69,6 +70,7 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
         ],
         'prevReminderTstamp' => [
             'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+            'exclude'    => true,
             'flag'      => DataContainer::SORT_DAY_DESC,
             'inputType' => 'text',
             'sorting'   => true,
@@ -93,9 +95,9 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
             'sql'        => "varchar(255) NOT NULL default ''",
         ],
         'history'            => [
+            'eval'      => ['style' => 'height:60px', 'decodeEntities' => true, 'tl_class' => 'w50'],
             'exclude'   => true,
             'inputType' => 'textarea',
-            'eval'      => ['style' => 'height:60px', 'decodeEntities' => true, 'tl_class' => 'w50'],
             'sql'       => 'text NULL',
         ],
     ],
