@@ -16,6 +16,7 @@ namespace Markocupic\SacEventRegistrationReminder\Notification;
 
 use Contao\CalendarEventsModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\System;
 use Contao\UserModel;
 use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
 use Markocupic\SacEventRegistrationReminder\String\Sanitizer;
@@ -109,6 +110,10 @@ class NotificationGenerator
                     }
 
                     $daysRegistered = floor($elapsedSeconds / 86400);
+
+                    $system = $this->framework->getAdapter(System::class);
+
+                    $system->loadLanguageFile('default');
 
                     $rowEvent['registrations_'.$deadlineKey][] = [
                         'firstname' => $registration->firstname,
