@@ -13,5 +13,3 @@ services:
     Markocupic\SacEventRegistrationReminder\:
         resource: ../src/
         exclude: ../src/{DependencyInjection,Model,Data/Data.php}
-
-

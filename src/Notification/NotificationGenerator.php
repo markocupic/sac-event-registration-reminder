@@ -22,6 +22,8 @@ use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
 use Markocupic\SacEventRegistrationReminder\String\Sanitizer;
 use Markocupic\SacEventToolBundle\Model\CalendarEventsMemberModel;
 use Safe\Exceptions\StringsException;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -35,10 +37,12 @@ class NotificationGenerator
 
     public function __construct(
         private readonly ContaoFramework $framework,
+        private readonly LocaleSwitcher $localeSwitcher,
         private readonly Environment $twig,
         private readonly TranslatorInterface $translator,
         private readonly Sanitizer $sanitizer,
         private readonly Stopwatch $stopwatch,
+        private readonly string $defaultLocale,
     ) {
     }
 
@@ -54,6 +58,7 @@ class NotificationGenerator
 
         return $this->render($this->prepareTwigData());
     }
+
 
     /**
      * @throws StringsException
@@ -72,6 +77,14 @@ class NotificationGenerator
 
     private function prepareTwigData(): array
     {
+        // If this function is called via a cron request,
+        // it is possible that the language cannot be determined.
+        // Therefore, the language has to be forced manually.
+        // See: https://symfony.com/blog/new-in-symfony-6-1-locale-switcher
+        $this->localeSwitcher->setLocale($this->defaultLocale);
+        $system = $this->framework->getAdapter(System::class);
+        $system->loadLanguageFile('default');
+
         $arrData = [];
 
         // Use predictive time of processing start (+ 60s for rounding issues)
@@ -110,10 +123,6 @@ class NotificationGenerator
                     }
 
                     $daysRegistered = floor($elapsedSeconds / 86400);
-
-                    $system = $this->framework->getAdapter(System::class);
-
-                    $system->loadLanguageFile('default');
 
                     $rowEvent['registrations_'.$deadlineKey][] = [
                         'firstname' => $registration->firstname,
