@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Markocupic\SacEventRegistrationReminder\Cron;
 
 use Contao\CoreBundle\Cron\Cron;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Markocupic\SacEventRegistrationReminder\Controller\EventRegistrationReminderController;
 
 /**
@@ -27,6 +28,7 @@ use Markocupic\SacEventRegistrationReminder\Controller\EventRegistrationReminder
 class NotificationCron
 {
     public function __construct(
+        private readonly ContaoFramework $framework,
         private readonly EventRegistrationReminderController $eventRegistrationReminderController,
         private readonly bool $allowWebScope,
         private readonly string $sid,
@@ -40,6 +42,9 @@ class NotificationCron
         if (Cron::SCOPE_WEB === $scope && !$this->allowWebScope) {
             return;
         }
+
+        // Initialize Contao framework
+        $this->framework->initialize();
 
         $this->eventRegistrationReminderController->run();
 
