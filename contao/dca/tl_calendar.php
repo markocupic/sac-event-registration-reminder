@@ -41,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields']['sendFirstReminderAfter'] = [
     'exclude'   => true,
     'options'   => range(1, 30, 1),
     'eval'      => ['tl_class' => 'w50'],
-    'sql'       => 'smallint(5) unsigned NOT NULL default 0',
+    'sql'       => "smallint(5) unsigned NOT NULL default 0",
 ];
 
 $GLOBALS['TL_DCA']['tl_calendar']['fields']['sendReminderEach'] = [
@@ -49,7 +49,7 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields']['sendReminderEach'] = [
     'exclude'   => true,
     'options'   => range(1, 30, 1),
     'eval'      => ['tl_class' => 'w50'],
-    'sql'       => 'smallint(5) unsigned NOT NULL default 0',
+    'sql'       => "smallint(5) unsigned NOT NULL default 0",
 ];
 
 $GLOBALS['TL_DCA']['tl_calendar']['fields']['sendReminderNotification'] = [

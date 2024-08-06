@@ -22,7 +22,6 @@ use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
 use Markocupic\SacEventRegistrationReminder\String\Sanitizer;
 use Markocupic\SacEventToolBundle\Model\CalendarEventsMemberModel;
 use Safe\Exceptions\StringsException;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -58,7 +57,6 @@ class NotificationGenerator
 
         return $this->render($this->prepareTwigData());
     }
-
 
     /**
      * @throws StringsException

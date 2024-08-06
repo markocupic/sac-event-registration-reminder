@@ -47,6 +47,5 @@ class NotificationCron
         $this->framework->initialize();
 
         $this->eventRegistrationReminderController->run();
-
     }
 }

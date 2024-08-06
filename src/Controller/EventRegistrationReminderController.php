@@ -99,7 +99,11 @@ class EventRegistrationReminderController extends AbstractController
             $arrUsers = $itCalendar->current();
 
             // Get the reminder interval in days
-            $reminderIntervalD = (int) $this->connection->fetchOne('SELECT sendReminderEach FROM tl_calendar WHERE id = ?', [$calendarId]);
+            $reminderIntervalD = (int) $this->connection->fetchOne(
+                'SELECT sendReminderEach FROM tl_calendar WHERE id = ?',
+                [$calendarId],
+                [Types::INTEGER],
+            );
 
             // Process each backend user
             if (\is_array($arrUsers)) {
@@ -133,18 +137,19 @@ class EventRegistrationReminderController extends AbstractController
                         $receiptCollection = $this->notificationHelper->send($notificationId, $userId, $calendarId, $arrTokens, $this->defaultLocale);
 
                         if ($receiptCollection->count()) {
-                            $userName = $this->connection->fetchOne('SELECT name FROM tl_user WHERE id = ?', [$userId]);
+                            $userName = $this->connection->fetchOne('SELECT name FROM tl_user WHERE id = ?', [$userId], [Types::INTEGER]);
 
                             // Get the previous reminder added-on timestamp, if there is one
                             $arrReminder = $this->connection->fetchAssociative(
                                 'SELECT * FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?',
-                                [$userId, $calendarId]
+                                [$userId, $calendarId],
+                                [Types::INTEGER, Types::INTEGER],
                             );
 
-                            $hasRecord = \is_array($arrReminder);
+                            $hasPreviousRecord = \is_array($arrReminder);
 
                             // Get the previous reminder added-on timestamp, if there is one
-                            $prevReminderTstamp = $hasRecord ? (int) $arrReminder['dateAdded'] : 0;
+                            $prevReminderTstamp = $hasPreviousRecord ? (int) $arrReminder['dateAdded'] : 0;
 
                             // Add a suffix to the title to point out lazy instructors/tour guides ;-)
                             $blnAddSuffix = $prevReminderTstamp && ($prevReminderTstamp + 2 * $reminderIntervalD * 86400) > $this->stopwatch->getRequestTime();
@@ -153,7 +158,7 @@ class EventRegistrationReminderController extends AbstractController
 
                             // Get the previous reminder added-on timestamp, if there is one
                             // and append it to the history
-                            $arrHistory = $hasRecord ? explode("\n", (string) $arrReminder['history']) : [];
+                            $arrHistory = $hasPreviousRecord ? explode("\n", (string) $arrReminder['history']) : [];
 
                             // Add the latest record to the top
                             array_unshift($arrHistory, sprintf('Sent a reminder to %s on %s;', $userName, date('d.m.Y H:i:s', $this->stopwatch->getRequestTime())));
@@ -179,11 +184,14 @@ class EventRegistrationReminderController extends AbstractController
                             if ($affectedRows) {
                                 $lastInsertId = $this->connection->lastInsertId();
 
-                                // Delete the old record
-                                $this->connection->executeStatement(
-                                    'DELETE FROM tl_event_registration_reminder_notification WHERE id != ? AND user = ? AND calendar = ?',
-                                    [$lastInsertId, $userId, $calendarId],
-                                );
+                                if (\is_int($lastInsertId)) {
+                                    // Delete the old record
+                                    $this->connection->executeStatement(
+                                        'DELETE FROM tl_event_registration_reminder_notification WHERE id != ? AND user = ? AND calendar = ?',
+                                        [$lastInsertId, $userId, $calendarId],
+                                        [Types::INTEGER, Types::INTEGER, Types::INTEGER],
+                                    );
+                                }
                             }
                         }
                     }

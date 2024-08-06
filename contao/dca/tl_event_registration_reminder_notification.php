@@ -45,7 +45,7 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
     ],
     'fields'   => [
         'id'                 => [
-            'sql' => 'int(10) unsigned NOT NULL auto_increment',
+            'sql' => "int(10) unsigned NOT NULL auto_increment",
         ],
         'tstamp'             => [
             'flag'    => DataContainer::SORT_DAY_DESC,
@@ -58,11 +58,11 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
             'inputType' => 'text',
             'search'    => true,
             'sorting'   => true,
-            'sql'       => "varchar(255) NOT NULL default ''",
+            'sql'       => "varchar(512) NOT NULL default ''",
         ],
         'dateAdded'          => [
             'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
-            'exclude'    => true,
+            'exclude'   => true,
             'flag'      => DataContainer::SORT_DAY_DESC,
             'inputType' => 'text',
             'sorting'   => true,
@@ -70,7 +70,7 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
         ],
         'prevReminderTstamp' => [
             'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
-            'exclude'    => true,
+            'exclude'   => true,
             'flag'      => DataContainer::SORT_DAY_DESC,
             'inputType' => 'text',
             'sorting'   => true,
@@ -83,7 +83,7 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
             'foreignKey' => 'tl_user.name',
             'inputType'  => 'text',
             'relation'   => ['type' => 'belongsTo', 'load' => 'lazy'],
-            'sql'        => 'int(10) unsigned NOT NULL default 0',
+            'sql'        => "int(10) unsigned NOT NULL default 0",
         ],
         'calendar'           => [
             'eval'       => ['tl_class' => 'w50'],
@@ -92,13 +92,13 @@ $GLOBALS['TL_DCA']['tl_event_registration_reminder_notification'] = [
             'foreignKey' => 'tl_calendar.title',
             'inputType'  => 'select',
             'relation'   => ['type' => 'hasOne', 'load' => 'lazy'],
-            'sql'        => "varchar(255) NOT NULL default ''",
+            'sql'        => "int(10) unsigned NOT NULL default 0",
         ],
         'history'            => [
             'eval'      => ['style' => 'height:60px', 'decodeEntities' => true, 'tl_class' => 'w50'],
             'exclude'   => true,
             'inputType' => 'textarea',
-            'sql'       => 'text NULL',
+            'sql'       => "text NULL",
         ],
     ],
 ];
