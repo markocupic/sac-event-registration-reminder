@@ -33,7 +33,7 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields']['enableInstructorReminderNotificatio
     'exclude'   => true,
     'filter'    => true,
     'eval'      => ['submitOnChange' => true, 'tl_class' => 'w50'],
-    'sql'       => "char(1) NOT NULL default ''",
+    'sql'       => ['type' => 'boolean', 'default' => false],
 ];
 
 $GLOBALS['TL_DCA']['tl_calendar']['fields']['sendFirstReminderAfter'] = [

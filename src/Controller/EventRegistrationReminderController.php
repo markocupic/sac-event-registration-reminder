@@ -101,8 +101,12 @@ class EventRegistrationReminderController extends AbstractController
             // Get the reminder interval in days
             $reminderIntervalD = (int) $this->connection->fetchOne(
                 'SELECT sendReminderEach FROM tl_calendar WHERE id = ?',
-                [$calendarId],
-                [Types::INTEGER],
+                [
+                    $calendarId,
+                ],
+                [
+                    Types::INTEGER,
+                ],
             );
 
             // Process each backend user
@@ -137,13 +141,27 @@ class EventRegistrationReminderController extends AbstractController
                         $receiptCollection = $this->notificationHelper->send($notificationId, $userId, $calendarId, $arrTokens, $this->defaultLocale);
 
                         if ($receiptCollection->count()) {
-                            $userName = $this->connection->fetchOne('SELECT name FROM tl_user WHERE id = ?', [$userId], [Types::INTEGER]);
+                            $userName = $this->connection->fetchOne(
+                                'SELECT name FROM tl_user WHERE id = ?',
+                                [
+                                    $userId,
+                                ],
+                                [
+                                    Types::INTEGER,
+                                ],
+                            );
 
                             // Get the previous reminder added-on timestamp, if there is one
                             $arrReminder = $this->connection->fetchAssociative(
                                 'SELECT * FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?',
-                                [$userId, $calendarId],
-                                [Types::INTEGER, Types::INTEGER],
+                                [
+                                    $userId,
+                                    $calendarId,
+                                ],
+                                [
+                                    Types::INTEGER,
+                                    Types::INTEGER,
+                                ],
                             );
 
                             $hasPreviousRecord = \is_array($arrReminder);
@@ -188,8 +206,16 @@ class EventRegistrationReminderController extends AbstractController
                                     // Delete the old record
                                     $this->connection->executeStatement(
                                         'DELETE FROM tl_event_registration_reminder_notification WHERE id != ? AND user = ? AND calendar = ?',
-                                        [$lastInsertId, $userId, $calendarId],
-                                        [Types::INTEGER, Types::INTEGER, Types::INTEGER],
+                                        [
+                                            $lastInsertId,
+                                            $userId,
+                                            $calendarId,
+                                        ],
+                                        [
+                                            Types::INTEGER,
+                                            Types::INTEGER,
+                                            Types::INTEGER,
+                                        ],
                                     );
                                 }
                             }
@@ -214,12 +240,12 @@ class EventRegistrationReminderController extends AbstractController
     private function getNotificationId(int $calendarId): int|null
     {
         $notificationId = $this->connection->fetchOne(
-            'SELECT sendReminderNotification from tl_calendar WHERE id = :calendarId',
+            'SELECT sendReminderNotification from tl_calendar WHERE id = ?',
             [
-                'calendarId' => $calendarId,
+                $calendarId,
             ],
             [
-                'calendarId' => Types::INTEGER,
+                Types::INTEGER,
             ],
         );
 
@@ -228,12 +254,12 @@ class EventRegistrationReminderController extends AbstractController
         }
 
         $notificationId = $this->connection->fetchOne(
-            'SELECT id FROM tl_nc_notification WHERE id = :id',
+            'SELECT id FROM tl_nc_notification WHERE id = ?',
             [
-                'id' => (int) $notificationId,
+                (int) $notificationId,
             ],
             [
-                'id' => Types::INTEGER,
+                Types::INTEGER,
             ]
         );
 

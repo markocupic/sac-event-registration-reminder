@@ -43,8 +43,24 @@ class DataCollector
             $arrData[$calendarId] = [];
 
             // time limit in days
-            $timeLimitD = $this->connection->fetchOne('SELECT sendFirstReminderAfter FROM tl_calendar WHERE id = ?', [$calendarId], [Types::INTEGER]);
-            $reminderIntervalD = $this->connection->fetchOne('SELECT sendReminderEach FROM tl_calendar WHERE id = ?', [$calendarId], [Types::INTEGER]);
+            $timeLimitD = $this->connection->fetchOne(
+                'SELECT sendFirstReminderAfter FROM tl_calendar WHERE id = ?',
+                [
+                    $calendarId,
+                ],
+                [
+                    Types::INTEGER,
+                ],
+            );
+            $reminderIntervalD = $this->connection->fetchOne(
+                'SELECT sendReminderEach FROM tl_calendar WHERE id = ?',
+                [
+                    $calendarId,
+                ],
+                [
+                    Types::INTEGER,
+                ],
+            );
 
             if (!$timeLimitD) {
                 continue;
@@ -98,7 +114,12 @@ class DataCollector
     {
         return $this->connection->fetchFirstColumn(
             'SELECT id FROM tl_calendar WHERE enableInstructorReminderNotification = ?',
-            ['1'],
+            [
+                1,
+            ],
+            [
+                Types::INTEGER,
+            ],
         );
     }
 
@@ -109,7 +130,12 @@ class DataCollector
     {
         return $this->connection->fetchFirstColumn(
             'SELECT id FROM tl_user WHERE disable = ?',
-            [''],
+            [
+                0,
+            ],
+            [
+                Types::INTEGER,
+            ],
         );
     }
 
@@ -127,8 +153,16 @@ class DataCollector
         // Do not send reminders if the user is still within the sendReminderEach time limit
         $result = $this->connection->fetchOne(
             'SELECT user FROM tl_event_registration_reminder_notification WHERE dateAdded > ? AND user = ? AND calendar = ?',
-            [$limit, $userId, $calendarId],
-            [Types::INTEGER, Types::INTEGER, Types::INTEGER],
+            [
+                $limit,
+                $userId,
+                $calendarId,
+            ],
+            [
+                Types::INTEGER,
+                Types::INTEGER,
+                Types::INTEGER,
+            ],
         );
 
         if (false !== $result) {
@@ -139,8 +173,16 @@ class DataCollector
         $arr1 = $this->connection->fetchFirstColumn(
             'SELECT id FROM tl_calendar_events AS t1 WHERE '.
             't1.pid = ? AND t1.published = 1 AND t1.registrationGoesTo = ? AND t1.startDate > ?',
-            [$calendarId, $userId, $now],
-            [Types::INTEGER, Types::INTEGER, Types::INTEGER],
+            [
+                $calendarId,
+                $userId,
+                $now,
+            ],
+            [
+                Types::INTEGER,
+                Types::INTEGER,
+                Types::INTEGER,
+            ],
         );
 
         // If the main instructor is the recipient of event registration notifications.
@@ -148,8 +190,16 @@ class DataCollector
             'SELECT id FROM tl_calendar_events AS t1 WHERE '.
             't1.pid = ? AND t1.published = 1 AND t1.registrationGoesTo = 0 AND t1.startDate > ? AND '.
             't1.id IN (SELECT t2.pid FROM tl_calendar_events_instructor AS t2 WHERE t2.isMainInstructor = 1 AND t2.userId = ?)',
-            [$calendarId, $now, $userId],
-            [Types::INTEGER, Types::INTEGER, Types::INTEGER],
+            [
+                $calendarId,
+                $now,
+                $userId,
+            ],
+            [
+                Types::INTEGER,
+                Types::INTEGER,
+                Types::INTEGER,
+            ],
         );
 
         return array_unique(array_merge($arr1, $arr2));
@@ -161,10 +211,17 @@ class DataCollector
     private function getRegistrationsByEventAndState(int $intEventId, string $strState, int $intTimeLimit): array
     {
         return $this->connection->fetchFirstColumn(
-            'SELECT * FROM tl_calendar_events_member WHERE '.
-            'eventId = ? AND stateOfSubscription = ? AND dateAdded <= ?',
-            [$intEventId, $strState, $intTimeLimit],
-            [Types::INTEGER, Types::STRING, Types::INTEGER],
+            'SELECT * FROM tl_calendar_events_member WHERE eventId = ? AND stateOfSubscription = ? AND dateAdded <= ?',
+            [
+                $intEventId,
+                $strState,
+                $intTimeLimit,
+            ],
+            [
+                Types::INTEGER,
+                Types::STRING,
+                Types::INTEGER,
+            ],
         );
     }
 }

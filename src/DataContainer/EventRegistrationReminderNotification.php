@@ -27,6 +27,6 @@ class EventRegistrationReminderNotification
     #[AsCallback(table: 'tl_event_registration_reminder_notification', target: 'fields.calendar.options')]
     public function getCalendars(): array
     {
-        return $this->connection->fetchFirstColumn('SELECT id FROM tl_calendar ORDER by pid');
+        return $this->connection->fetchFirstColumn('SELECT id FROM tl_calendar ORDER BY pid');
     }
 }
