@@ -19,11 +19,11 @@ use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Types\Types;
 use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
 
-class DataCollector
+readonly class DataCollector
 {
     public function __construct(
-        private readonly Connection $connection,
-        private readonly Stopwatch $stopwatch,
+        private Connection $connection,
+        private Stopwatch $stopwatch,
     ) {
     }
 
@@ -102,9 +102,7 @@ class DataCollector
             }
         }
 
-        $arrData = array_filter($arrData);
-
-        return $arrData;
+        return array_filter($arrData);
     }
 
     /**
@@ -210,18 +208,18 @@ class DataCollector
      */
     private function getRegistrationsByEventAndState(int $intEventId, string $strState, int $intTimeLimit): array
     {
-        return $this->connection->fetchFirstColumn(
-            'SELECT * FROM tl_calendar_events_member WHERE eventId = ? AND stateOfSubscription = ? AND dateAdded <= ?',
-            [
-                $intEventId,
-                $strState,
-                $intTimeLimit,
-            ],
-            [
-                Types::INTEGER,
-                Types::STRING,
-                Types::INTEGER,
-            ],
-        );
+        $qb = $this->connection->createQueryBuilder();
+        $qb->select('*')
+            ->from('tl_calendar_events_member', 't')
+            ->where('t.firstname != "" AND t.lastname != "" AND t.gender != "" AND t.street != "" AND t.postal != "" AND t.city != ""')
+            ->andWhere('t.eventId = :eventId')
+            ->andWhere('t.stateOfSubscription = :stateOfSubscription')
+            ->andWhere('t.dateAdded <= :dateAdded')
+            ->setParameter('eventId', $intEventId, Types::INTEGER)
+            ->setParameter('stateOfSubscription', $strState, Types::STRING)
+            ->setParameter('dateAdded', $intTimeLimit, Types::INTEGER)
+            ;
+
+        return $qb->fetchFirstColumn();
     }
 }
