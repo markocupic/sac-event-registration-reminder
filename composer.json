@@ -22,7 +22,7 @@
         "source": "https://github.com/markocupic/sac-event-registration-reminder"
     },
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "contao/core-bundle": "^5.0",
         "markocupic/sac-event-tool-bundle": "dev-contao5",
         "terminal42/notification_center": "^2.0"
