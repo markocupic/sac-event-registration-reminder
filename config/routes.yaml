@@ -1,3 +1,0 @@
-markocupic_sac_event_registration_reminder.controller:
-    resource: ../src/Controller
-    type: attribute

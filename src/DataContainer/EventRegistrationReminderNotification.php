@@ -17,10 +17,10 @@ namespace Markocupic\SacEventRegistrationReminder\DataContainer;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Doctrine\DBAL\Connection;
 
-class EventRegistrationReminderNotification
+readonly class EventRegistrationReminderNotification
 {
     public function __construct(
-        private readonly Connection $connection,
+        private Connection $connection,
     ) {
     }
 

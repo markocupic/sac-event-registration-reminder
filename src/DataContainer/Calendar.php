@@ -17,9 +17,9 @@ namespace Markocupic\SacEventRegistrationReminder\DataContainer;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Doctrine\DBAL\Connection;
 
-class Calendar
+readonly class Calendar
 {
-    public function __construct(private readonly Connection $connection)
+    public function __construct(private Connection $connection)
     {
     }
 

@@ -25,13 +25,12 @@ use Markocupic\SacEventRegistrationReminder\Controller\EventRegistrationReminder
  * Use a real cronjob:
  * wget -q -O /dev/null 'https://<domain>/_contao/cron' >/dev/null 2>&1.
  */
-class NotificationCron
+readonly class NotificationCron
 {
     public function __construct(
-        private readonly ContaoFramework $framework,
-        private readonly EventRegistrationReminderController $eventRegistrationReminderController,
-        private readonly bool $allowWebScope,
-        private readonly string $sid,
+        private ContaoFramework $framework,
+        private EventRegistrationReminderController $eventRegistrationReminderController,
+        private bool $allowWebScope,
     ) {
     }
 
