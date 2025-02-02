@@ -127,7 +127,7 @@ class NotificationGenerator
                         'lastname' => $registration->lastname,
                         'trans' => [
                             'days_registered' => $this->translator->trans('MSC.serr_days_registered', [$daysRegistered], 'contao_default'),
-                            'participant' => 'female' === $registration->gender ? $this->translator->trans('MSC.serr_participant_female', [], 'contao_default') : $this->translator->trans('MSC.serr_participant_male', [], 'contao_default'),
+                            'participant' => $this->translator->trans('MSC.serr_participant', [], 'contao_default'),
                             'sac_member_id' => $this->translator->trans('MSC.serr_sac_member_id', [(int) $registration->sacMemberId], 'contao_default'),
                         ],
                     ];
