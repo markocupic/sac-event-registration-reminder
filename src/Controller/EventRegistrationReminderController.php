@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Markocupic\SacEventRegistrationReminder\Controller;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\CoreBundle\Monolog\ContaoContext;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Types\Types;
@@ -48,7 +47,7 @@ class EventRegistrationReminderController extends AbstractController
         private readonly string $sid,
         private readonly int $notificationLimitPerRequest,
         private readonly string $defaultLocale,
-        private readonly LoggerInterface|null $logger,
+        private readonly LoggerInterface|null $contaoCronLogger,
     ) {
     }
 
@@ -96,9 +95,22 @@ class EventRegistrationReminderController extends AbstractController
         // Process each calendar
         while ($itCalendar->valid()) {
             $calendarId = (int) $itCalendar->key();
+
+            // Get the notification
+            if (null === ($notificationId = $this->getNotificationId($calendarId))) {
+                $itCalendar->next();
+                continue;
+            }
+
             $arrUsers = $itCalendar->current();
 
-            // Get the reminder interval in days
+            // Process each backend user
+            if (!\is_array($arrUsers)) {
+                $itCalendar->next();
+                continue;
+            }
+
+            // Get the reminder interval (days)
             $reminderIntervalD = (int) $this->connection->fetchOne(
                 'SELECT sendReminderEach FROM tl_calendar WHERE id = ?',
                 [
@@ -109,130 +121,123 @@ class EventRegistrationReminderController extends AbstractController
                 ],
             );
 
-            // Process each backend user
-            if (\is_array($arrUsers)) {
-                $itUsers = (new Data($arrUsers))->getIterator();
+            $itUsers = (new Data($arrUsers))->getIterator();
 
-                while ($itUsers->valid()) {
-                    ++$userCount;
+            while ($itUsers->valid()) {
+                ++$userCount;
 
-                    $userId = (int) $itUsers->key();
+                $userId = (int) $itUsers->key();
 
-                    $arrUser = $itUsers->current();
+                $arrUser = $itUsers->current();
 
-                    // Generate the guest list
-                    $strRegistrations = $this->messageGenerator
-                        ->generate($arrUser, $userId)
-                    ;
+                // Generate the guest list
+                $strRegistrations = $this->messageGenerator->generate($arrUser, $userId);
 
-                    // Get the notification
-                    if (null !== ($notificationId = $this->getNotificationId($calendarId))) {
-                        $arrTokens = [
-                            'registrations' => $strRegistrations,
-                        ];
+                $arrTokens = [
+                    'registrations' => $strRegistrations,
+                ];
 
-                        // The notification limit is adjustable (Symfony Friendly Configuration)
-                        ++$notificationCount;
+                // The notification limit is adjustable (Symfony Friendly Configuration)
+                ++$notificationCount;
 
-                        if ($notificationCount > $this->notificationLimitPerRequest) {
-                            break 2;
-                        }
-
-                        $receiptCollection = $this->notificationHelper->send($notificationId, $userId, $calendarId, $arrTokens, $this->defaultLocale);
-
-                        if ($receiptCollection->count()) {
-                            $userName = $this->connection->fetchOne(
-                                'SELECT name FROM tl_user WHERE id = ?',
-                                [
-                                    $userId,
-                                ],
-                                [
-                                    Types::INTEGER,
-                                ],
-                            );
-
-                            // Get the previous reminder added-on timestamp, if there is one
-                            $arrReminder = $this->connection->fetchAssociative(
-                                'SELECT * FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?',
-                                [
-                                    $userId,
-                                    $calendarId,
-                                ],
-                                [
-                                    Types::INTEGER,
-                                    Types::INTEGER,
-                                ],
-                            );
-
-                            $hasPreviousRecord = \is_array($arrReminder);
-
-                            // Get the previous reminder added-on timestamp, if there is one
-                            $prevReminderTstamp = $hasPreviousRecord ? (int) $arrReminder['dateAdded'] : 0;
-
-                            // Add a suffix to the title to point out lazy instructors/tour guides ;-)
-                            $blnAddSuffix = $prevReminderTstamp && ($prevReminderTstamp + 2 * $reminderIntervalD * 86400) > $this->stopwatch->getRequestTime();
-                            $strSuffix = $blnAddSuffix ? sprintf(' (last time %s)', date('d.m.Y', $prevReminderTstamp)) : '';
-                            $strTitle = sprintf('Sent a reminder to %s%s.', $userName, $strSuffix);
-
-                            // Get the previous reminder added-on timestamp, if there is one
-                            // and append it to the history
-                            $arrHistory = $hasPreviousRecord ? explode("\n", (string) $arrReminder['history']) : [];
-
-                            // Add the latest record to the top
-                            array_unshift($arrHistory, sprintf('Sent a reminder to %s on %s;', $userName, date('d.m.Y H:i:s', $this->stopwatch->getRequestTime())));
-
-                            // The history contains the latest 10 records only
-                            $arrHistory = \array_slice($arrHistory, 0, 10);
-
-                            $set = [
-                                'tstamp' => $this->stopwatch->getRequestTime(),
-                                'dateAdded' => $this->stopwatch->getRequestTime(),
-                                'prevReminderTstamp' => $prevReminderTstamp,
-                                'title' => $strTitle,
-                                'user' => $userId,
-                                'calendar' => $calendarId,
-                                'history' => implode("\n", $arrHistory),
-                            ];
-
-                            // Create a new record that prevents
-                            // the user from being notified again and again
-                            // before the expiry of the "remindEach" limit
-                            $affectedRows = $this->connection->insert('tl_event_registration_reminder_notification', $set);
-
-                            if ($affectedRows) {
-                                $lastInsertId = $this->connection->lastInsertId();
-
-                                if (\is_int($lastInsertId)) {
-                                    // Delete the old record
-                                    $this->connection->executeStatement(
-                                        'DELETE FROM tl_event_registration_reminder_notification WHERE id != ? AND user = ? AND calendar = ?',
-                                        [
-                                            $lastInsertId,
-                                            $userId,
-                                            $calendarId,
-                                        ],
-                                        [
-                                            Types::INTEGER,
-                                            Types::INTEGER,
-                                            Types::INTEGER,
-                                        ],
-                                    );
-                                }
-                            }
-                        }
-                    }
-
-                    $itUsers->next();
+                // We have reached the limit, so stop here
+                if ($notificationCount > $this->notificationLimitPerRequest) {
+                    break 2;
                 }
+
+                $receiptCollection = $this->notificationHelper->send($notificationId, $userId, $calendarId, $arrTokens, $this->defaultLocale);
+
+                if (!$receiptCollection->count()) {
+                    $itUsers->next();
+                    continue;
+                }
+
+                $userName = $this->connection->fetchOne(
+                    'SELECT name FROM tl_user WHERE id = ?',
+                    [
+                        $userId,
+                    ],
+                    [
+                        Types::INTEGER,
+                    ],
+                );
+
+                // Get the previous reminder added-on timestamp if there is one
+                $arrReminder = $this->connection->fetchAssociative(
+                    'SELECT * FROM tl_event_registration_reminder_notification WHERE user = ? AND calendar = ?',
+                    [
+                        $userId,
+                        $calendarId,
+                    ],
+                    [
+                        Types::INTEGER,
+                        Types::INTEGER,
+                    ],
+                );
+
+                $hasPreviousRecord = \is_array($arrReminder);
+
+                // Get the previous reminder added-on timestamp if there is one
+                $prevReminderTstamp = $hasPreviousRecord ? (int) $arrReminder['dateAdded'] : 0;
+
+                // Add a suffix to the title to point out lazy instructors/tour guides ;-)
+                $blnAddSuffix = $prevReminderTstamp && ($prevReminderTstamp + 2 * $reminderIntervalD * 86400) > $this->stopwatch->getRequestTime();
+                $strSuffix = $blnAddSuffix ? \sprintf(' (last time %s)', date('d.m.Y', $prevReminderTstamp)) : '';
+                $strTitle = \sprintf('Sent a reminder to %s%s.', $userName, $strSuffix);
+
+                // Get the previous reminder added-on timestamp if there is one and append it to
+                // the history
+                $arrHistory = $hasPreviousRecord ? explode("\n", (string) $arrReminder['history']) : [];
+
+                // Add the latest record to the top
+                array_unshift($arrHistory, \sprintf('Sent a reminder to %s on %s;', $userName, date('d.m.Y H:i:s', $this->stopwatch->getRequestTime())));
+
+                // The history contains the latest 10 records only
+                $arrHistory = \array_slice($arrHistory, 0, 10);
+
+                $set = [
+                    'tstamp' => $this->stopwatch->getRequestTime(),
+                    'dateAdded' => $this->stopwatch->getRequestTime(),
+                    'prevReminderTstamp' => $prevReminderTstamp,
+                    'title' => $strTitle,
+                    'user' => $userId,
+                    'calendar' => $calendarId,
+                    'history' => implode("\n", $arrHistory),
+                ];
+
+                // Create a new record that prevents the user from being notified again and again
+                // before the expiry of the "remindEach" limit
+                $affectedRows = $this->connection->insert('tl_event_registration_reminder_notification', $set);
+
+                $lastInsertId = $this->connection->lastInsertId();
+
+                if ($affectedRows && \is_int($lastInsertId)) {
+                    // Delete the old record
+                    $this->connection->executeStatement(
+                        'DELETE FROM tl_event_registration_reminder_notification WHERE id != ? AND user = ? AND calendar = ?',
+                        [
+                            $lastInsertId,
+                            $userId,
+                            $calendarId,
+                        ],
+                        [
+                            Types::INTEGER,
+                            Types::INTEGER,
+                            Types::INTEGER,
+                        ],
+                    );
+                }
+
+                $itUsers->next();
             }
 
             $itCalendar->next();
         }
 
         // Log and send a response
-        $responseMsg = sprintf('SAC event registration reminder: Processed %d users and sent %d notifications. Script runtime: %d s.', $userCount, $notificationCount, $this->stopwatch->getDuration());
+        $responseMsg = \sprintf('SAC event registration reminder: Processed %d users and sent %d notifications. Script runtime: %d s.', $userCount, $notificationCount, $this->stopwatch->getDuration());
 
-        $this->log($responseMsg);
+        $this->contaoCronLogger->info($responseMsg);
 
         return new Response($responseMsg);
     }
@@ -260,7 +265,7 @@ class EventRegistrationReminderController extends AbstractController
             ],
             [
                 Types::INTEGER,
-            ]
+            ],
         );
 
         if (false !== $notificationId) {
@@ -268,13 +273,5 @@ class EventRegistrationReminderController extends AbstractController
         }
 
         return null;
-    }
-
-    private function log(string $text): void
-    {
-        $this->logger?->info(
-            $text,
-            ['contao' => new ContaoContext(__METHOD__, ContaoContext::CRON)]
-        );
     }
 }
