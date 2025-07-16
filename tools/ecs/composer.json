@@ -1,6 +1,7 @@
 {
     "require": {
-        "contao/easy-coding-standard": "^5.4"
+        "contao/easy-coding-standard": "^5.4",
+        "markocupic/contao-component-bootstrap": "6.*"
     },
     "config": {
         "allow-plugins": {

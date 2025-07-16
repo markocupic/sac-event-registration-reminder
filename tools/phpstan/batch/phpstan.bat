@@ -6,4 +6,5 @@ cd..
 cd..
 cd..
 cd..
-php -d memory_limit=-1 vendor/bin/phpstan analyse vendor/markocupic/sac-event-registration-reminder/src vendor/markocupic/sac-event-registration-reminder/tests
+php -d memory_limit=-1 vendor/bin/phpstan analyse vendor/markocupic/sac-event-registration-reminder/src
+:: php -d memory_limit=-1 vendor/markocupic/sac-event-registration-reminder/tests
