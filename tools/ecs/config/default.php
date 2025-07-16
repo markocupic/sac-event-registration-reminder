@@ -18,7 +18,7 @@ return ECSConfig::configure()
         MethodChainingIndentationFixer::class => [
             '*/DependencyInjection/Configuration.php',
         ],
-        UnusedVariableSniff::class => [
+        UnusedVariableSniff::class            => [
             //'core-bundle/tests/Session/Attribute/ArrayAttributeBagTest.php',
         ],
     ])
