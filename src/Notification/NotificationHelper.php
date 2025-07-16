@@ -22,8 +22,11 @@ use Terminal42\NotificationCenterBundle\Receipt\ReceiptCollection;
 class NotificationHelper
 {
     private CalendarModel|null $calendar = null;
+
     private UserModel|null $user = null;
+
     private int|null $notificationId = null;
+
     private array|null $tokens = null;
 
     public function __construct(
@@ -46,12 +49,12 @@ class NotificationHelper
     {
         $this->notificationId = $notificationId;
 
-        if (null === ($this->user = UserModel::findByPk($userId))) {
-            throw new \Exception(sprintf('User with ID %s not found', $userId));
+        if (null === ($this->user = UserModel::findById($userId))) {
+            throw new \Exception(\sprintf('User with ID %s not found', $userId));
         }
 
-        if (null === ($this->calendar = CalendarModel::findByPk($calendarId))) {
-            throw new \Exception(sprintf('Calendar with ID %s not found', $calendarId));
+        if (null === ($this->calendar = CalendarModel::findById($calendarId))) {
+            throw new \Exception(\sprintf('Calendar with ID %s not found', $calendarId));
         }
 
         $this->tokens = $arrTokens;

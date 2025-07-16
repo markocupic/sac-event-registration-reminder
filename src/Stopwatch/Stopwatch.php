@@ -17,8 +17,11 @@ namespace Markocupic\SacEventRegistrationReminder\Stopwatch;
 class Stopwatch
 {
     public const FLOOR_SECONDS = 'Y-m-d H:i:s';
+
     public const FLOOR_MINUTES = 'Y-m-d H:i';
+
     public const FLOOR_HOURS = 'Y-m-d H';
+
     public const FLOOR_DAY = 'Y-m-d';
 
     public function getRequestTime(string $strFloor = self::FLOOR_SECONDS): int

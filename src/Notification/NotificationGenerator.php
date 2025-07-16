@@ -32,6 +32,7 @@ use Twig\Error\SyntaxError;
 class NotificationGenerator
 {
     private array|null $data;
+
     private UserModel|null $user;
 
     public function __construct(
@@ -68,17 +69,16 @@ class NotificationGenerator
 
         $userModelAdapter = $this->framework->getAdapter(UserModel::class);
 
-        if (null === ($this->user = $userModelAdapter->findByPk($userId))) {
-            throw new \Exception(sprintf('User with ID %d not found', $userId));
+        if (null === ($this->user = $userModelAdapter->findById($userId))) {
+            throw new \Exception(\sprintf('User with ID %d not found', $userId));
         }
     }
 
     private function prepareTwigData(): array
     {
-        // If this function is called via a cron request,
-        // it is possible that the language cannot be determined.
-        // Therefore, the language has to be forced manually.
-        // See: https://symfony.com/blog/new-in-symfony-6-1-locale-switcher
+        // If this function is called via a cron request, it is possible that the
+        // language cannot be determined. Therefore, the language has to be forced
+        // manually. See: https://symfony.com/blog/new-in-symfony-6-1-locale-switcher
         $this->localeSwitcher->setLocale($this->defaultLocale);
         $system = $this->framework->getAdapter(System::class);
         $system->loadLanguageFile('default');
@@ -91,7 +91,7 @@ class NotificationGenerator
         $calendarEventsModelAdapter = $this->framework->getAdapter(CalendarEventsModel::class);
 
         foreach ($this->data as $eventId => $arrEvent) {
-            $event = $calendarEventsModelAdapter->findByPk($eventId);
+            $event = $calendarEventsModelAdapter->findById($eventId);
 
             if (null === $event) {
                 continue;
@@ -108,7 +108,7 @@ class NotificationGenerator
                 $rowEvent['has_registrations_'.$deadlineKey] = !empty($arrEvent[$deadlineKey]);
 
                 foreach ($arrEvent[$deadlineKey] as $registrationId) {
-                    $registration = CalendarEventsMemberModel::findByPk($registrationId);
+                    $registration = CalendarEventsMemberModel::findById($registrationId);
 
                     if (null === $registration) {
                         continue;
@@ -147,12 +147,9 @@ class NotificationGenerator
      */
     private function render(array $arrData): string
     {
-        return $this->twig->render(
-            '@MarkocupicSacEventRegistrationReminder/message_partial.twig',
-            [
-                'user' => $this->user->row(),
-                'events' => $arrData,
-            ]
-        );
+        return $this->twig->render('@MarkocupicSacEventRegistrationReminder/message_partial.twig', [
+            'user' => $this->user->row(),
+            'events' => $arrData,
+        ]);
     }
 }

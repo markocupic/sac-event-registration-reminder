@@ -218,7 +218,7 @@ readonly class DataCollector
             ->setParameter('eventId', $intEventId, Types::INTEGER)
             ->setParameter('stateOfSubscription', $strState, Types::STRING)
             ->setParameter('dateAdded', $intTimeLimit, Types::INTEGER)
-            ;
+        ;
 
         return $qb->fetchFirstColumn();
     }

@@ -31,9 +31,6 @@ class MarkocupicSacEventRegistrationReminder extends Bundle
         return new MarkocupicSacEventRegistrationReminderExtension();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container): void
     {
         parent::build($container);

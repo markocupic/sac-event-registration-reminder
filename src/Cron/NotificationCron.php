@@ -19,11 +19,11 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Markocupic\SacEventRegistrationReminder\Controller\EventRegistrationReminderController;
 
 /**
- * Define the cron schedule
- * in the configuration -> %sac_evt_reg_reminder.cron_schedule%.
+ * Define the cron schedule in the configuration ->
+ * %sac_evt_reg_reminder.cron_schedule%.
  *
- * Use a real cronjob:
- * wget -q -O /dev/null 'https://<domain>/_contao/cron' >/dev/null 2>&1.
+ * Use a real cronjob: wget -q -O /dev/null 'https://<domain>/_contao/cron'
+ * >/dev/null 2>&1.
  */
 readonly class NotificationCron
 {
@@ -36,8 +36,8 @@ readonly class NotificationCron
 
     public function __invoke(string $scope): void
     {
-        // Do not execute this cron job in the web scope
-        // if $this->allowWebScope is set to false (configuration)
+        // Do not execute this cron job in the web scope if $this->allowWebScope is set
+        // to false (configuration)
         if (Cron::SCOPE_WEB === $scope && !$this->allowWebScope) {
             return;
         }
