@@ -21,7 +21,6 @@ use Contao\UserModel;
 use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
 use Markocupic\SacEventRegistrationReminder\String\Sanitizer;
 use Markocupic\SacEventToolBundle\Model\CalendarEventsMemberModel;
-use Safe\Exceptions\StringsException;
 use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -49,7 +48,6 @@ class NotificationGenerator
     /**
      * @throws LoaderError
      * @throws RuntimeError
-     * @throws StringsException
      * @throws SyntaxError
      */
     public function generate(array $arrData, int $userId): string
@@ -60,7 +58,6 @@ class NotificationGenerator
     }
 
     /**
-     * @throws StringsException
      * @throws \Exception
      */
     private function initialize(array $arrData, int $userId): void

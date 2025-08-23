@@ -25,7 +25,6 @@ use Markocupic\SacEventRegistrationReminder\Notification\NotificationHelper;
 use Markocupic\SacEventRegistrationReminder\Stopwatch\Stopwatch;
 use Markocupic\SacEventToolBundle\Config\EventSubscriptionState;
 use Psr\Log\LoggerInterface;
-use Safe\Exceptions\StringsException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -53,7 +52,6 @@ class EventRegistrationReminderController extends AbstractController
 
     /**
      * @throws DbalException
-     * @throws StringsException
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -69,7 +67,6 @@ class EventRegistrationReminderController extends AbstractController
 
     /**
      * @throws DbalException
-     * @throws StringsException
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
