@@ -12,4 +12,6 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/sac-event-registration-reminder
  */
 
-$GLOBALS['TL_LANG']['tl_nc_notification']['type']['event_registration_reminder'] = ['Reminder to event instructors to catch up on missed event registrations', 'Send a reminder to event instructors to catch up on missed event registrations.'];
+use Markocupic\SacEventRegistrationReminder\NotificationType\EventRegistrationReminderNotificationType;
+
+$GLOBALS['TL_LANG']['tl_nc_notification']['type'][EventRegistrationReminderNotificationType::NAME] = ['Reminder to event instructors to catch up on missed event registrations', 'Send a reminder to event instructors to catch up on missed event registrations.'];

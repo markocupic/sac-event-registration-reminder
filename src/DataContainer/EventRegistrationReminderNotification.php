@@ -19,9 +19,8 @@ use Doctrine\DBAL\Connection;
 
 readonly class EventRegistrationReminderNotification
 {
-    public function __construct(
-        private Connection $connection,
-    ) {
+    public function __construct(private Connection $connection)
+    {
     }
 
     #[AsCallback(table: 'tl_event_registration_reminder_notification', target: 'fields.calendar.options')]

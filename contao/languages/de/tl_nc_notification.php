@@ -12,4 +12,6 @@ declare(strict_types=1);
  * @link https://github.com/markocupic/sac-event-registration-reminder
  */
 
-$GLOBALS['TL_LANG']['tl_nc_notification']['type']['event_registration_reminder'] = ['Reminder an TL die Bearbeitung vesäumter Event-Registrierungen nachzuholen', 'Senden Sie einen Reminder an TL, die Bearbeitung versäumter Event-Registrierungen nachzuholen.'];
+use Markocupic\SacEventRegistrationReminder\NotificationType\EventRegistrationReminderNotificationType;
+
+$GLOBALS['TL_LANG']['tl_nc_notification']['type'][EventRegistrationReminderNotificationType::NAME] = ['Reminder an TL die Bearbeitung vesäumter Event-Registrierungen nachzuholen', 'Senden Sie einen Reminder an TL, die Bearbeitung versäumter Event-Registrierungen nachzuholen.'];

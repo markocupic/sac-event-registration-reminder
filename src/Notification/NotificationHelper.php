@@ -29,9 +29,8 @@ class NotificationHelper
 
     private array|null $tokens = null;
 
-    public function __construct(
-        private readonly NotificationCenter $notificationCenter,
-    ) {
+    public function __construct(private readonly NotificationCenter $notificationCenter)
+    {
     }
 
     public function send(int $notificationId, int $userId, int $calendarId, array $arrTokens, string $defaultLocale): ReceiptCollection
